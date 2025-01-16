@@ -1,32 +1,32 @@
-from flask import Flask, render_template, jsonify, request
-from models import db, Message
-from utils.llm_helper import get_llm_response
-import config
+from flask import Flask, render_template, request, jsonify
+from database import get_db_connection
+from utils.llm_helper import LLMHandler
 
 app = Flask(__name__)
-app.config.from_object(config.Config)
-db.init_app(app)
+app.config.from_object('config.Config')
+llm = LLMHandler()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    user_message = request.json.get('message')
+@app.route('/generate', methods=['POST'])
+def generate():
+    prompt = request.json.get('prompt')
+    response = llm.generate_response(prompt)
     
-    # Get LLM response
-    llm_response = get_llm_response(user_message)
-    
-    # Store in database
-    new_message = Message(
-        user_message=user_message,
-        llm_response=llm_response
+    # Store the interaction in database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO interactions (prompt, response) VALUES (%s, %s)",
+        (prompt, response)
     )
-    db.session.add(new_message)
-    db.session.commit()
+    conn.commit()
+    cursor.close()
+    conn.close()
     
-    return jsonify({'response': llm_response})
+    return jsonify({'response': response})
 
 if __name__ == '__main__':
     app.run(debug=True)
