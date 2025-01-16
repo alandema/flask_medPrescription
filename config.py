@@ -1,10 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+import os
 
-db = SQLAlchemy()
-
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_message = db.Column(db.Text, nullable=False)
-    llm_response = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+class Config:
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
