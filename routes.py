@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, current_app, redirect, url_for, session
-from flask_login import login_required, login_user, logout_user, current_user
-from werkzeug.security import check_password_hash, generate_password_hash
-import uuid
+from flask import render_template, current_app
+from database import get_db_connection
 
 
 @current_app.route('/')
 def index():
-    return render_template('index.html')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, name, age FROM users LIMIT 5")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('index.html', rows=rows)

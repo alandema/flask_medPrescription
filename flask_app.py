@@ -1,5 +1,8 @@
-from flask import Flask
+from dotenv import load_dotenv  # noqa
+load_dotenv('config.env')  # noqa
+
 from config import Config
+from flask import Flask
 
 
 def create_app():

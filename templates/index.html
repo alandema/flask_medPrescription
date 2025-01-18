@@ -1,17 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}LLM Interface{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>LLM Interface</h1>
-    <div class="input-section">
-        <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
-        <button onclick="generateResponse()">Generate</button>
-    </div>
-    <div class="response-section">
-        <h2>Response:</h2>
-        <div id="response"></div>
-    </div>
+    <h1>First 5 Rows of the Table</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.age }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
