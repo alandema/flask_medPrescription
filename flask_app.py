@@ -1,32 +1,13 @@
-from flask import Flask, render_template, request, jsonify
-from database import get_db_connection
-from utils.llm_helper import LLMHandler
+from flask import Flask
+from config import Config
 
-app = Flask(__name__)
-app.config.from_object('config.Config')
-llm = LLMHandler()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-@app.route('/generate', methods=['POST'])
-def generate():
-    prompt = request.json.get('prompt')
-    response = llm.generate_response(prompt)
-    
-    # Store the interaction in database
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO interactions (prompt, response) VALUES (%s, %s)",
-        (prompt, response)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    
-    return jsonify({'response': response})
+    # Import routes from main and chatbot logic
+    with app.app_context():
+        import routes  # Importing routes to register them
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    return app
