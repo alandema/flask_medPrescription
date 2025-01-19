@@ -153,6 +153,30 @@ textarea {
     color: #721c24;
 }
 
+.state-city-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.state-city-group .form-group {
+    flex: 1;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+}
+
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, .25);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     nav ul {

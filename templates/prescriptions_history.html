@@ -5,26 +5,34 @@
     <h1>Histórico de Prescrições</h1>
 
     <div class="filters">
-        <form method="GET" action="{{ url_for('history') }}" class="filter-form">
+        <form method="POST" action="{{ url_for('prescriptions_history') }}" class="filter-form">
             <div class="form-group">
                 <label for="patient_filter">Paciente</label>
-                <input type="text" name="patient" id="patient_filter" value="{{ request.args.get('patient', '') }}">
+                <select name="patient" id="patient_filter">
+                    <option value="">Todos os pacientes</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.id }}">
+                        {{ patient.name }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
                 <label for="date_from">Data Inicial</label>
-                <input type="date" name="date_from" id="date_from" value="{{ request.args.get('date_from', '') }}">
+                <input type="date" name="date_from" id="date_from">
             </div>
 
             <div class="form-group">
                 <label for="date_to">Data Final</label>
-                <input type="date" name="date_to" id="date_to" value="{{ request.args.get('date_to', '') }}">
+                <input type="date" name="date_to" id="date_to">
             </div>
 
             <button type="submit" class="btn-primary">Filtrar</button>
         </form>
     </div>
 
+    {% if prescriptions is defined and prescriptions %}
     <div class="prescriptions-list">
         {% for prescription in prescriptions %}
         <div class="prescription-card">
@@ -44,5 +52,6 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}
