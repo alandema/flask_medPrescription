@@ -1,7 +1,7 @@
-from flask import render_template, current_app, request, redirect, url_for
+from flask import current_app, render_template, request, redirect, url_for, flash
 from .database import db, Patients, Prescriptions
 from datetime import datetime
-from .utils import get_filtered_prescriptions
+from .utils.professional_info import get_professional_info
 
 
 @current_app.route('/')
@@ -12,9 +12,55 @@ def index():
 @current_app.route('/create_prescription', methods=['GET', 'POST'])
 def create_prescription():
     if request.method == 'POST':
-        # Handle prescription creation
-        pass
-    return render_template('create_prescription.html')
+        try:
+            prescription_data = {
+                'patient_id': request.form.get('patient'),
+                'prescription_type': request.form.get('prescription_type'),
+                'created_at': datetime.now(),
+                'medications': []
+            }
+
+            # Add CID if hormonal
+            if prescription_data['prescription_type'] == 'hormonal':
+                prescription_data['cid'] = request.form.get('cid')
+                if not prescription_data['cid']:
+                    flash('CID é obrigatório para prescrições hormonais.', 'error')
+                    return redirect(url_for('create_prescription'))
+
+            # Process medications
+            medication_selects = request.form.getlist('medication-select[]')
+            custom_medications = request.form.getlist('custom-medication[]')
+            dosage_selects = request.form.getlist('dosage-select[]')
+            custom_dosages = request.form.getlist('custom-dosage[]')
+            instructions = request.form.getlist('usage-instructions[]')
+
+            for i in range(len(medication_selects)):
+                medication = {
+                    'name': custom_medications[i] if medication_selects[i] == 'custom' else medication_selects[i],
+                    'dosage': custom_dosages[i] if dosage_selects[i] == 'custom' else dosage_selects[i],
+                    'instructions': instructions[i]
+                }
+                prescription_data['medications'].append(medication)
+
+            # Save prescription to database
+            # db.prescriptions.insert(prescription_data)  # Implement according to your database
+
+            flash('Prescrição criada com sucesso!', 'success')
+            return redirect(url_for('view_prescription', id=prescription_id))  # Implement view route
+
+        except Exception as e:
+            flash(f'Erro ao criar prescrição: {str(e)}', 'error')
+            return redirect(url_for('create_prescription'))
+
+    # GET request - render form
+    return render_template(
+        'create_prescription.html',
+        patients=Patients.query.get(request.form.get('patient_id')),  # Implement this function
+        medications=["a", "b", "c"],  # Implement this function
+        dosages=["a", "b", "c"],  # Implement this function
+        cid_list=["a", "b", "c"],  # Implement this function
+        doctor=get_professional_info(),  # Implement this function
+    )
 
 
 @current_app.route('/register_patient', methods=['GET', 'POST'])
@@ -80,7 +126,17 @@ def prescriptions_history():
         date_to = request.form.get('date_to')
 
         # Query prescriptions based on filters
-        prescriptions = get_filtered_prescriptions(patient_id, date_from, date_to)
+        query = Prescriptions.query
+        if patient_id:
+            query = query.filter_by(patient_id=patient_id)
+
+        if date_from:
+            query = query.filter(Prescriptions.date_prescribed >= date_from)
+
+        if date_to:
+            query = query.filter(Prescriptions.date_prescribed <= date_to)
+
+        prescriptions = query.all()
 
         return render_template('prescriptions_history.html',
                                patients=patients,

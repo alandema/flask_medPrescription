@@ -1,57 +1,124 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="prescription-form">
-    <h1>Nova Prescrição</h1>
-
-    <form method="POST" action="{{ url_for('create_prescription') }}">
-        <div class="form-group">
-            <label for="patient">Paciente</label>
-            <select name="patient" id="patient" required>
-                <option value="">Selecione o paciente</option>
-                {% for patient in patients %}
-                <option value="{{ patient.id }}">{{ patient.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="prescription_type">Tipo de Prescrição</label>
-            <select name="prescription_type" id="prescription_type" required>
-                <option value="">Selecione o tipo</option>
-                <option value="formula">Fórmula Manipulada</option>
-                <option value="medication">Medicamento</option>
-                <option value="skincare">Skincare</option>
-            </select>
-        </div>
-
-        <div id="formula_section" class="form-section">
-            <h3>Fórmula</h3>
+<div class="prescription-container">
+    <script src="{{ url_for('static', filename='js/create_prescription.js') }}"></script>
+    <!-- Left Side - Options -->
+    <div class="options-panel">
+        <h2>Nova Prescrição</h2>
+        <form method="POST" action="{{ url_for('create_prescription') }}" id="prescriptionForm">
+            <!-- Patient Selection -->
             <div class="form-group">
-                <label for="base">Base</label>
-                <select name="base" id="base">
-                    <option value="">Selecione a base</option>
-                    <option value="cream">Creme</option>
-                    <option value="gel">Gel</option>
-                    <option value="lotion">Loção</option>
+                <label for="patient">Paciente</label>
+                <select name="patient" id="patient" required onchange="updatePreview()">
+                    <option value="">Selecione o paciente</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.id }}">{{ patient.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
+            <!-- Prescription Type -->
             <div class="form-group">
-                <label for="custom_formula">Fórmula Personalizada</label>
-                <textarea name="custom_formula" id="custom_formula" rows="4"></textarea>
+                <label>Tipo de Prescrição</label>
+                <div class="radio-group">
+                    <input type="radio" id="non_hormonal" name="prescription_type" value="non_hormonal" checked
+                        onchange="toggleCIDSection()">
+                    <label for="non_hormonal">Não Hormonal</label>
+                    <input type="radio" id="hormonal" name="prescription_type" value="hormonal"
+                        onchange="toggleCIDSection()">
+                    <label for="hormonal">Hormonal</label>
+                </div>
+            </div>
+
+            <!-- CID Section (initially hidden) -->
+            <div id="cid_section" class="form-group hidden">
+                <label for="cid">CID (Código Internacional de Doenças)</label>
+                <select name="cid" id="cid" onchange="updatePreview()">
+                    <option value="">Selecione o CID</option>
+                    {% for cid in cid_list %}
+                    <option value="{{ cid.code }}">{{ cid.code }} - {{ cid.description }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Medications Section -->
+            <div id="medications_section">
+                <h3>Medicamentos</h3>
+                <div id="medications_list">
+                    <!-- Template for medication entry -->
+                    <div class="medication-entry">
+                        <div class="form-group">
+                            <label>Medicamento</label>
+                            <div class="medication-input">
+                                <select class="medication-select" onchange="toggleCustomMedication(this)">
+                                    <option value="">Selecione ou customize</option>
+                                    <option value="custom">Customizar</option>
+                                    {% for med in medications %}
+                                    <option value="{{ med.id }}">{{ med.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" class="custom-medication hidden" placeholder="Nome do medicamento">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dosagem</label>
+                            <div class="dosage-input">
+                                <select class="dosage-select" onchange="toggleCustomDosage(this)">
+                                    <option value="">Selecione ou customize</option>
+                                    <option value="custom">Customizar</option>
+                                    {% for dosage in dosages %}
+                                    <option value="{{ dosage.id }}">{{ dosage.description }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" class="custom-dosage hidden" placeholder="Dosagem personalizada">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Instruções de Uso</label>
+                            <textarea class="usage-instructions" rows="2" onchange="updatePreview()"></textarea>
+                        </div>
+
+                        <button type="button" class="btn-remove" onclick="removeMedication(this)">Remover</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addMedication()">Adicionar Medicamento</button>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Salvar Prescrição</button>
+                <button type="reset" class="btn-secondary">Limpar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right Side - Preview -->
+    <div class="preview-panel">
+        <div class="a4-preview">
+            <div class="preview-header">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="preview-logo">
+                <div class="doctor-info">
+                    <h3>Dr. {{ doctor.name }}</h3>
+                    <p>CRM: {{ doctor.cro }}</p>
+                    <p>{{ doctor.specialization }}</p>
+                </div>
+            </div>
+            <div class="preview-content">
+                <div id="preview_patient"></div>
+                <div id="preview_date"></div>
+                <div id="preview_cid" class="hidden"></div>
+                <div id="preview_medications"></div>
+            </div>
+            <div class="preview-footer">
+                <div class="signature-line">
+                    <p>_____________________________</p>
+                    <p>Dr. {{ doctor.name }}</p>
+                    <p>CRM: {{ doctor.cro }}</p>
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <label for="instructions">Instruções de Uso</label>
-            <textarea name="instructions" id="instructions" rows="3" required></textarea>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn-primary">Criar Prescrição</button>
-            <button type="reset" class="btn-secondary">Limpar</button>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}
