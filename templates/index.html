@@ -4,24 +4,11 @@
 
 {% block content %}
 <div class="container">
-    <h1>First 5 Rows of the Table</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                <td>{{ row.id }}</td>
-                <td>{{ row.name }}</td>
-                <td>{{ row.age }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1>Welcome to Medical Prescriptions</h1>
+    <p>Manage your patients and prescriptions efficiently.</p>
+    <div class="action-buttons">
+        <a href="{{ url_for('register_patient') }}" class="button">Register New Patient</a>
+        <a href="{{ url_for('create_prescription') }}" class="button">Create New Prescription</a>
+    </div>
 </div>
 {% endblock %}

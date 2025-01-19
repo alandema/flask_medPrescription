@@ -5,6 +5,9 @@ from config import Config
 from flask import Flask
 from database import init_db
 
+import os
+print(os.getcwd())
+
 
 def create_app():
     app = Flask(__name__)
