@@ -172,3 +172,4 @@ cython_debug/
 
 config.env
 app.db
+static/images/*

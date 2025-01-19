@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="prescription-form">
+    <h1>Nova Prescrição</h1>
+
+    <form method="POST" action="{{ url_for('create_prescription') }}">
+        <div class="form-group">
+            <label for="patient">Paciente</label>
+            <select name="patient" id="patient" required>
+                <option value="">Selecione o paciente</option>
+                {% for patient in patients %}
+                <option value="{{ patient.id }}">{{ patient.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="prescription_type">Tipo de Prescrição</label>
+            <select name="prescription_type" id="prescription_type" required>
+                <option value="">Selecione o tipo</option>
+                <option value="formula">Fórmula Manipulada</option>
+                <option value="medication">Medicamento</option>
+                <option value="skincare">Skincare</option>
+            </select>
+        </div>
+
+        <div id="formula_section" class="form-section">
+            <h3>Fórmula</h3>
+            <div class="form-group">
+                <label for="base">Base</label>
+                <select name="base" id="base">
+                    <option value="">Selecione a base</option>
+                    <option value="cream">Creme</option>
+                    <option value="gel">Gel</option>
+                    <option value="lotion">Loção</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="custom_formula">Fórmula Personalizada</label>
+                <textarea name="custom_formula" id="custom_formula" rows="4"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="instructions">Instruções de Uso</label>
+            <textarea name="instructions" id="instructions" rows="3" required></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Criar Prescrição</button>
+            <button type="reset" class="btn-secondary">Limpar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

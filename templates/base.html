@@ -1,27 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %} - Medical Prescriptions</title>
+    <title>{% block title %}Emanuele de Maman - Biomedicina Estética{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&family=Raleway:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('register_patient') }}">Register Patient</a></li>
-            <li><a href="{{ url_for('create_prescription') }}">Create Prescription</a></li>
-            <li><a href="{{ url_for('past_prescriptions') }}">Prescriptions History</a></li>
-        </ul>
-    </nav>
-    <main>
+    <header>
+        <nav class="main-nav">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Emanuele de Maman Logo"
+                    class="logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('create_prescription') }}">Nova Prescrição</a></li>
+                <li><a href="{{ url_for('register_patient') }}">Cadastro</a></li>
+                <li><a href="{{ url_for('prescriptions_history') }}">Histórico</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </main>
+
     <footer>
-        <p>&copy; 2023 Medical Prescriptions App</p>
+        <p>&copy; {{ current_year }} Emanuele de Maman - Biomedicina Estética. Todos os direitos reservados.</p>
     </footer>
 </body>
 

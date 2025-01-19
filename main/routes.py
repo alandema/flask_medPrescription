@@ -1,5 +1,5 @@
 from flask import render_template, current_app, request, redirect, url_for
-from database import db, Patient, Prescription
+from .database import db, Patient, Prescription
 
 
 @current_app.route('/')
@@ -23,7 +23,7 @@ def register_patient():
     return render_template('register_patient.html')
 
 
-@current_app.route('/past_prescriptions')
-def past_prescriptions():
+@current_app.route('/prescriptions_history')
+def prescriptions_history():
     prescriptions = Prescription.query.order_by(Prescription.date_prescribed.desc()).all()
-    return render_template('past_prescriptions.html', prescriptions=prescriptions)
+    return render_template('prescriptions_history.html', prescriptions=prescriptions)

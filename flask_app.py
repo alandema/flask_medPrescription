@@ -1,9 +1,9 @@
 from dotenv import load_dotenv  # noqa
 load_dotenv('config.env')  # noqa
 
-from config import Config
+from main.config import Config
 from flask import Flask
-from database import db
+from main.database import db
 from sqlalchemy_utils import database_exists, create_database
 
 import os
@@ -28,7 +28,7 @@ def create_app():
         if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
             create_database(app.config['SQLALCHEMY_DATABASE_URI'])
         db.create_all()
-        import routes  # Importing routes to register them
+        import main.routes as routes  # Importing routes to register them
 
     return app
 
