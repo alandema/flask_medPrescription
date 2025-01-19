@@ -55,7 +55,7 @@ def create_prescription():
     # GET request - render form
     return render_template(
         'create_prescription.html',
-        patients=Patients.query.get(request.form.get('patient_id')),  # Implement this function
+        patients=Patients.query.all(),  # Implement this function
         medications=["a", "b", "c"],  # Implement this function
         dosages=["a", "b", "c"],  # Implement this function
         cid_list=["a", "b", "c"],  # Implement this function

@@ -98,10 +98,10 @@
     <div class="preview-panel">
         <div class="a4-preview">
             <div class="preview-header">
-                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="preview-logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="preview-logo">
                 <div class="doctor-info">
                     <h3>Dr. {{ doctor.name }}</h3>
-                    <p>CRM: {{ doctor.cro }}</p>
+                    <p>CRO: {{ doctor.cro }}</p>
                     <p>{{ doctor.specialization }}</p>
                 </div>
             </div>
@@ -115,7 +115,7 @@
                 <div class="signature-line">
                     <p>_____________________________</p>
                     <p>Dr. {{ doctor.name }}</p>
-                    <p>CRM: {{ doctor.cro }}</p>
+                    <p>CRO: {{ doctor.cro }}</p>
                 </div>
             </div>
         </div>
