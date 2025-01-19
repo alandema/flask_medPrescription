@@ -20,9 +20,3 @@ class Prescription(db.Model):
     medication = db.Column(db.String(100), nullable=False)
     dosage = db.Column(db.String(50), nullable=False)
     date_prescribed = db.Column(db.DateTime, default=datetime.utcnow)
-
-
-def init_db(app):
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqldb://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}/{Config.MYSQL_DB}"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
-    db.init_app(app)
