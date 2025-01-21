@@ -27,6 +27,15 @@
             </div>
 
             <div class="form-group">
+                <label for="gender">Sexo</label>
+                <select name="gender" id="gender" required>
+                    <option value="">Selecione o sexo</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="cpf">CPF</label>
                 <input maxlength=14 type="text" name="cpf" id="cpf" value="{{ patient.cpf if patient else '' }}"
                     required>

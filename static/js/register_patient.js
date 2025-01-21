@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(patient => {
                 document.getElementById('name').value = patient.name;
+                document.getElementById('gender').value = patient.gender;
                 document.getElementById('cpf').value = patient.cpf;
                 document.getElementById('birth_date').value = patient.birth_date;
                 document.getElementById('phone').value = patient.phone;

@@ -35,7 +35,7 @@ def populate_database():
         patient = Patients(
             name=name,
             cpf=f"{random.randint(10000000000, 99999999999)}",
-            gender=random.choice(["Male", "Female"]),
+            gender=random.choice(["Masculino", "Feminino"]),
             birth_date=random_date(datetime(1970, 1, 1), datetime(2010, 12, 12)).date(),
             phone=f"({random.randint(10, 99):02d}) {random.randint(10000, 99999):05d}-{random.randint(1000, 9999):04d}",
             street=f"Street {i}",
