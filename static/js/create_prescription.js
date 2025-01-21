@@ -34,13 +34,25 @@ function toggleCustomDosage(select) {
 function addMedication() {
     const template = document.querySelector('.medication-entry').cloneNode(true);
     template.querySelector('.medication-select').value = '';
-    template.querySelector('.dosage-select').value = '';
-    template.querySelector('.usage-instructions').value = '';
+    template.querySelector('.medication-info').value = '';
     document.getElementById('medications_list').appendChild(template);
+    updatePreview();
 }
 
 function removeMedication(button) {
     button.closest('.medication-entry').remove();
+    updatePreview();
+}
+
+function updateMedicationInfo(select) {
+    const infoInput = select.closest('.medication-entry').querySelector('.medication-info');
+    if (select.value) {
+        // Fetch medication info based on selected value and update the text input
+        // For now, we'll just use the medication name as an example
+        infoInput.value = select.options[select.selectedIndex].text;
+    } else {
+        infoInput.value = '';
+    }
     updatePreview();
 }
 
@@ -67,21 +79,15 @@ function updatePreview() {
 
     document.querySelectorAll('.medication-entry').forEach((entry, index) => {
         const medSelect = entry.querySelector('.medication-select');
-        const customMed = entry.querySelector('.custom-medication');
-        const dosageSelect = entry.querySelector('.dosage-select');
-        const customDosage = entry.querySelector('.custom-dosage');
-        const instructions = entry.querySelector('.usage-instructions');
+        const medInfo = entry.querySelector('.medication-info');
 
-        const medName = medSelect.value === 'custom' ? customMed.value :
-            medSelect.options[medSelect.selectedIndex]?.text;
-        const dosage = dosageSelect.value === 'custom' ? customDosage.value :
-            dosageSelect.options[dosageSelect.selectedIndex]?.text;
+        const medName = medSelect.options[medSelect.selectedIndex]?.text || 'Medicamento personalizado';
+        const info = medInfo.value;
 
-        if (medName) {
+        if (info) {
             medicationsPreview.innerHTML += `
                 <p>${index + 1}. ${medName}</p>
-                ${dosage ? `<p>Dosagem: ${dosage}</p>` : ''}
-                ${instructions.value ? `<p>Instruções: ${instructions.value}</p>` : ''}
+                <p>Informações: ${info}</p>
                 <br>
             `;
         }
@@ -90,3 +96,7 @@ function updatePreview() {
 
 // Initial preview update
 document.addEventListener('DOMContentLoaded', updatePreview);
+
+document.querySelector('.medication-info').addEventListener('focusout', function() {
+    updatePreview();
+});

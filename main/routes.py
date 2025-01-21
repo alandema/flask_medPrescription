@@ -2,6 +2,7 @@ from flask import current_app, render_template, request, redirect, url_for, flas
 from .database import db, Patients, Prescriptions
 from datetime import datetime
 from .utils.professional_info import get_professional_info
+from .utils.medication_list import get_medications
 
 
 @current_app.route('/')
@@ -56,7 +57,7 @@ def create_prescription():
     return render_template(
         'create_prescription.html',
         patients=Patients.query.all(),  # Implement this function
-        medications=["a", "b", "c"],  # Implement this function
+        medications=get_medications(),  # Implement this function
         dosages=["a", "b", "c"],  # Implement this function
         cid_list=["a", "b", "c"],  # Implement this function
         doctor=get_professional_info(),  # Implement this function

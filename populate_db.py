@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
 from flask_app import create_app  # Import the create_app function to initialize the app
-from main.database import db, Patients, Prescriptions  # Import db and models from database.py
+from main.database import db, Patients, Prescriptions, Medications  # Import db and models from database.py
 
 
 def random_date(start, end):
@@ -13,7 +13,23 @@ def populate_database():
     # Sample data
     patient_names = ["Alice Smith", "Bob Johnson", "Catherine Lee", "David Brown", "Emma Wilson",
                      "Frank Harris", "Grace Young", "Henry Clark", "Ivy Hall", "Jack Adams"]
-    medications = ["Ibuprofen", "Amoxicillin", "Paracetamol", "Metformin", "Omeprazole"]
+    medications = [
+        {"name": "Ibuprofen", "formula": "Ibuprofen 200mg, excipients", "usage": "Take 2 tablets every 12 hours"},
+        {"name": "Amoxicillin", "formula": "Amoxicillin 500mg, excipients", "usage": "Take 1 tablet every 8 hours"},
+        {"name": "Paracetamol", "formula": "Paracetamol 500mg, excipients", "usage": "Take 1 tablet every 4-6 hours"},
+        {"name": "Metformin", "formula": "Metformin 500mg, excipients", "usage": "Take 1 tablet every 12 hours"},
+        {"name": "Omeprazole", "formula": "Omeprazole 20mg, excipients", "usage": "Take 1 tablet every 24 hours"}
+    ]
+
+    # Generate and insert medications
+    for med in medications:
+        db_medicament = Medications(
+            name=med["name"],
+            formula=med["formula"],
+            usage=med["usage"]
+        )
+        db.session.add(db_medicament)
+        db.session.commit()
 
     # Generate and insert patients
     for i, name in enumerate(patient_names, start=1):
@@ -37,7 +53,7 @@ def populate_database():
         for _ in range(random.randint(0, 5)):
             prescription = Prescriptions(
                 patient_id=patient.id,
-                medication=random.choice(medications),
+                medication=random.choice(medications)["name"],
                 dosage=f"{random.randint(1, 3)} tablets per day",
                 date_prescribed=random_date(datetime(2023, 1, 1), datetime(2024, 1, 1))
             )

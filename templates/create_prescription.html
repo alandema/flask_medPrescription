@@ -51,36 +51,19 @@
                         <div class="form-group">
                             <label>Medicamento</label>
                             <div class="medication-input">
-                                <select class="medication-select" onchange="toggleCustomMedication(this)">
+                                <select class="medication-select" onchange="updateMedicationInfo(this)">
                                     <option value="">Selecione ou customize</option>
-                                    <option value="custom">Customizar</option>
                                     {% for med in medications %}
                                     <option value="{{ med.id }}">{{ med.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="text" class="custom-medication hidden" placeholder="Nome do medicamento">
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label>Dosagem</label>
-                            <div class="dosage-input">
-                                <select class="dosage-select" onchange="toggleCustomDosage(this)">
-                                    <option value="">Selecione ou customize</option>
-                                    <option value="custom">Customizar</option>
-                                    {% for dosage in dosages %}
-                                    <option value="{{ dosage.id }}">{{ dosage.description }}</option>
-                                    {% endfor %}
-                                </select>
-                                <input type="text" class="custom-dosage hidden" placeholder="Dosagem personalizada">
-                            </div>
+                            <label>Informações do Medicamento</label>
+                            <textarea class="medication-info" rows="3"></textarea>
+                            
                         </div>
-
-                        <div class="form-group">
-                            <label>Instruções de Uso</label>
-                            <textarea class="usage-instructions" rows="2" onchange="updatePreview()"></textarea>
-                        </div>
-
                         <button type="button" class="btn-remove" onclick="removeMedication(this)">Remover</button>
                     </div>
                 </div>
