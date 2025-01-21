@@ -24,16 +24,13 @@
             </div>
 
             <!-- Prescription Type -->
+
             <div class="form-group">
                 <label>Tipo de Prescrição</label>
-                <div class="radio-group">
-                    <input type="radio" id="non_hormonal" name="prescription_type" value="non_hormonal" checked
-                        onchange="toggleCIDSection()">
-                    <label for="non_hormonal">Não Hormonal</label>
-                    <input type="radio" id="hormonal" name="prescription_type" value="hormonal"
-                        onchange="toggleCIDSection()">
-                    <label for="hormonal">Hormonal</label>
-                </div>
+                <select id="prescription-type" required onchange="toggleCIDSection()">
+                    <option id="non_hormonal" name="prescription_type" value="non_hormonal">Não Hormonal</option>
+                    <option id="hormonal" name="prescription_type" value="hormonal">Hormonal</option>
+                </select>
             </div>
 
             <!-- CID Section (initially hidden) -->

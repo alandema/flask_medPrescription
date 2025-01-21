@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
 from flask_app import create_app  # Import the create_app function to initialize the app
-from main.database import db, Patients, Prescriptions, Medications  # Import db and models from database.py
+from main.database import db, Patients, Prescriptions, Medications, Cids  # Import db and models from database.py
 
 
 def random_date(start, end):
@@ -59,6 +59,32 @@ def populate_database():
             )
             db.session.add(prescription)
 
+        icd_codes = [
+            ("E29.1", "Hipofunção testicular"),
+            ("E29.8", "Outra disfunção testicular"),
+            ("E29.9", "Disfunção testicular não especificada"),
+            ("R86.1", "Achados anormais de material proveniente dos órgãos genitais masculinos - nível hormonal anormal"),
+            ("E28", "Disfunção ovariana"),
+            ("E28.2", "Síndrome do ovário policístico"),
+            ("E28.8", "Outra disfunção ovariana"),
+            ("E28.9", "Disfunção ovariana não especificada"),
+            ("R87.1", "Achados anormais de material proveniente dos órgãos genitais femininos - nível hormonal anormal"),
+            ("N95.1", "Estado da menopausa e do climatério feminino"),
+            ("E34.9", "Transtorno endócrino não especificado"),
+            ("E55", "Deficiência de vitamina D"),
+            ("E55.9", "Deficiência não especificada de vitamina D"),
+            ("F41.2", "Transtorno misto ansioso e depressivo"),
+            ("R45.4", "Irritabilidade e mau humor"),
+            ("E27.1", "Hipofunção Adrenal"),
+            ("E03.9", "Hipotireoidismo não especificado")
+        ]
+
+        for code, description in icd_codes:
+            cid = Cids(
+                code=code,
+                description=description
+            )
+            db.session.add(cid)
     db.session.commit()
 
 

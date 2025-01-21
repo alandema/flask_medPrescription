@@ -1,7 +1,7 @@
 function toggleCIDSection() {
     const cidSection = document.getElementById('cid_section');
     const previewCID = document.getElementById('preview_cid');
-    if (document.getElementById('hormonal').checked) {
+    if (document.getElementById('prescription-type').value === 'hormonal') {
         cidSection.classList.remove('hidden');
         previewCID.classList.remove('hidden');
     } else {
@@ -99,7 +99,7 @@ function updatePreview() {
     const cidSelect = document.getElementById('cid');
     const selectedCID = cidSelect.options[cidSelect.selectedIndex];
     document.getElementById('preview_cid').innerHTML = selectedCID.value ?
-        `<p>CID: ${selectedCID.text}</p>` : '';
+        `<h4><br /><br />CID: ${selectedCID.text}</h4>` : '';
 
     // Update medications
     const medicationsPreview = document.getElementById('preview_medications');

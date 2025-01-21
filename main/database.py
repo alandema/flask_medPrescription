@@ -36,3 +36,10 @@ class Medications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
     information = db.Column(db.Text, nullable=False)
+
+
+class Cids(db.Model):
+    __tablename__ = 'cids'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10), nullable=False)
+    description = db.Column(db.Text, nullable=False)

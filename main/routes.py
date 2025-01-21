@@ -3,6 +3,7 @@ from .database import db, Patients, Prescriptions
 from datetime import datetime
 from .utils.professional_info import get_professional_info
 from .utils.medication_list import get_medications
+from .utils.cid_list import get_cids
 import json
 
 
@@ -57,11 +58,10 @@ def create_prescription():
     # GET request - render form
     return render_template(
         'create_prescription.html',
-        patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),  # Implement this function
-        medications=get_medications(),  # Implement this function
-        dosages=["a", "b", "c"],  # Implement this function
-        cid_list=["a", "b", "c"],  # Implement this function
-        doctor=get_professional_info(),  # Implement this function
+        patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),
+        medications=get_medications(),
+        cid_list=get_cids(),
+        doctor=get_professional_info()
     )
 
 
