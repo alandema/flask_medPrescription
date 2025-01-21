@@ -101,21 +101,19 @@
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="preview-logo">
                 <div class="doctor-info">
                     <h3>Dr. {{ doctor.name }}</h3>
-                    <p>CRO: {{ doctor.cro }}</p>
-                    <p>{{ doctor.specialization }}</p>
+                    <p>CPF: {{ doctor.cpf }} | CRO: {{ doctor.cro }}</p>
+                    <p>{{ doctor.address }}</p>
                 </div>
             </div>
             <div class="preview-content">
                 <div id="preview_patient"></div>
-                <div id="preview_date"></div>
                 <div id="preview_cid" class="hidden"></div>
                 <div id="preview_medications"></div>
             </div>
             <div class="preview-footer">
                 <div class="signature-line">
                     <p>_____________________________</p>
-                    <p>Dr. {{ doctor.name }}</p>
-                    <p>CRO: {{ doctor.cro }}</p>
+                    <div id="preview_date"></div>
                 </div>
             </div>
         </div>

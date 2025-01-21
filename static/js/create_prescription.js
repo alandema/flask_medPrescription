@@ -63,7 +63,7 @@ function updatePreview() {
 
     // Update medications
     const medicationsPreview = document.getElementById('preview_medications');
-    medicationsPreview.innerHTML = '<h4>Prescrição:</h4>';
+    medicationsPreview.innerHTML = '<h4><br /><br />Prescrição:</h4>';
 
     document.querySelectorAll('.medication-entry').forEach((entry, index) => {
         const medSelect = entry.querySelector('.medication-select');
