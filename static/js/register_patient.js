@@ -23,6 +23,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
+function formatPhone(mascara, documento) {
+    let i = documento.value.length;
+    let saida = '#';
+    let texto = mascara.substring(i);
+    while (texto.substring(0, 1) != saida && texto.length) {
+        documento.value += texto.substring(0, 1);
+        i++;
+        texto = mascara.substring(i);
+    }
+}
+
 // CPF validation function
 function isValidCPF(cpf) {
     if (cpf.length !== 11) return false;
@@ -111,3 +123,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const event = new Event('change');
     countrySelect.dispatchEvent(event);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const patientSelect = document.getElementById('patient-select');
+
+
+
+    patientSelect.addEventListener('change', function () {
+        const patientId = this.value;
+
+        if (patientId === 'new') {
+            // Clear the form for new patient
+            document.getElementById('patientForm').reset();
+            patientSelect.value = 'new';
+            return;
+        }
+        fetch(`/get_patient/${patientId}`)
+            .then(response => response.json())
+            .then(patient => {
+                document.getElementById('name').value = patient.name;
+                document.getElementById('cpf').value = patient.cpf;
+                document.getElementById('birth_date').value = patient.birth_date;
+                document.getElementById('phone').value = patient.phone;
+                document.getElementById('country').value = patient.country;
+                document.getElementById('state').value = patient.state;
+                document.getElementById('city').value = patient.city;
+                document.getElementById('street').value = patient.street;
+                document.getElementById('house_number').value = patient.house_number;
+                document.getElementById('additional_info').value = patient.additional_info;
+            })
+    });
+});
+

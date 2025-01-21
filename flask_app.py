@@ -17,10 +17,12 @@ def create_app():
         # Use SQLite for local development
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
+        app.config['SECRET_KEY'] = Config.SECRET_KEY
     else:
         # Use MySQL for production (PythonAnywhere)
         app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqldb://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}/{Config.MYSQL_DB}"
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
+        app.config['SECRET_KEY'] = Config.SECRET_KEY
 
     db.init_app(app)
 

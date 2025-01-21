@@ -7,3 +7,4 @@ class Config:
     MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
     MYSQL_DB = os.getenv('MYSQL_DB')
     FLASK_ENV = os.getenv('FLASK_ENV', 'production')
+    SECRET_KEY = os.getenv('SECRET_KEY')

@@ -4,12 +4,21 @@
 <div class="register-page">
     <script src="{{ url_for('static', filename='js/register_patient.js') }}"></script>
 
-    <h1>{{ 'Editar' if patient else 'Cadastrar' }} Paciente</h1>
+    <h1>
+        Paciente
+    </h1>
+    <select id="patient-select">
+        <option value="new">Novo Paciente</option>
+        {% for patient in patients %}
+        <option value="{{ patient.id }}">{{ patient.name }}</option>
+        {% endfor %}
+    </select>
 
-    <form method="POST" action="{{ url_for('register_patient') }}" class="patient-form">
-        {% if patient %}
-        <input type="hidden" name="patient_id" value="{{ patient.id }}">
-        {% endif %}
+    <p><br></br><br></br></p>
+
+    <form id="patientForm" method="POST" action="{{ url_for('register_patient') }}" class="patient-form">
+        <input type="hidden" id="patient-id" name="patient_id">
+
 
         <div class="form-row">
             <div class="form-group">
@@ -28,12 +37,13 @@
             <div class="form-group">
                 <label for="birth_date">Data de Nascimento</label>
                 <input type="date" name="birth_date" id="birth_date" value="{{ patient.birth_date if patient else '' }}"
-                    required>
+                    min="1900-01-01" max="2100-12-12">
             </div>
 
             <div class="form-group">
                 <label for="phone">Telefone</label>
-                <input type="tel" name="phone" id="phone" value="{{ patient.phone if patient else '' }}" required>
+                <input type="tel" name="phone" id="phone" value="{{ patient.phone if patient else '' }}" required
+                    OnKeyPress="formatPhone('(##) #####-####',this)" maxlength="15">
             </div>
         </div>
         <div class="address-section">
@@ -66,8 +76,8 @@
                     <label for="country">País</label>
                     <select name="country" id="country" required>
                         <option value="">Selecione o país</option>
-                        <option value="BR" {% if patient and patient.country=='BR' %}selected{% endif %}>Brasil</option>
-                        <option value="OUTRO" {% if patient and patient.country=='OUTRO' %}selected{% endif %}>Outro
+                        <option value="BR">Brasil</option>
+                        <option value="OUTRO">Outro
                         </option>
                     </select>
                 </div>
@@ -97,7 +107,7 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-primary">{{ 'Atualizar' if patient else 'Cadastrar' }}</button>
+            <button type="submit" class="btn-primary">Salvar</button>
             <button type="reset" class="btn-secondary">Limpar</button>
         </div>
     </form>

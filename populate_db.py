@@ -35,12 +35,13 @@ def populate_database():
         patient = Patients(
             name=name,
             cpf=f"{random.randint(10000000000, 99999999999)}",
+            gender=random.choice(["Male", "Female"]),
             birth_date=random_date(datetime(1970, 1, 1), datetime(2010, 12, 12)).date(),
-            phone=f"+1-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
+            phone=f"({random.randint(10, 99):02d}) {random.randint(10000, 99999):05d}-{random.randint(1000, 9999):04d}",
             street=f"Street {i}",
             house_number=f"{random.randint(1, 999)}",
             additional_info=f"Apt {random.randint(1, 50)}" if random.random() > 0.5 else None,
-            country="Country X",
+            country=random.choice(["BR", "OUTRO"]),
             state=f"State {random.choice(['A', 'B', 'C'])}",
             city=f"City {random.randint(1, 5)}",
             medical_history="No significant history." if random.random() > 0.3 else "Has allergies."
