@@ -1,10 +1,8 @@
 {
     "name": "john",
-    "crbm": "00000/RT",
-    "cro": "00000/RT",
-    "city": "Paulo",
-    "state": "PL",
-    "country": "Brazil",
-    "phone": "(11) 1 1111-1111",
-    "cpf": "000.000.000-00"
+    "crbm":"00000/RT",
+    "cro":"00000/RT",
+    "address":"St. John",
+    "phone":"(11) 1 1111-1111",
+    "cpf":"000.000.000-00"
 }
