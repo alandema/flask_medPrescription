@@ -56,7 +56,7 @@ def create_prescription():
     # GET request - render form
     return render_template(
         'create_prescription.html',
-        patients=Patients.query.all(),  # Implement this function
+        patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),  # Implement this function
         medications=get_medications(),  # Implement this function
         dosages=["a", "b", "c"],  # Implement this function
         cid_list=["a", "b", "c"],  # Implement this function
@@ -72,7 +72,7 @@ def register_patient():
         birth_date = request.form.get('birth_date')
         phone = request.form.get('phone')
         street = request.form.get('street')
-        number = request.form.get('number')
+        house_number = request.form.get('house_number')
         additional_info = request.form.get('additional_info', "")
         country = request.form.get('country')
         state = request.form.get('state', "")
@@ -88,7 +88,7 @@ def register_patient():
             patient.birth_date = birth_date
             patient.phone = phone
             patient.street = street
-            patient.number = number
+            patient.house_number = house_number
             patient.additional_info = additional_info
             patient.country = country
             patient.state = state
@@ -101,7 +101,7 @@ def register_patient():
                 birth_date=birth_date,
                 phone=phone,
                 street=street,
-                number=number,
+                house_number=house_number,
                 additional_info=additional_info,
                 country=country,
                 state=state,

@@ -38,7 +38,7 @@ def populate_database():
             birth_date=random_date(datetime(1970, 1, 1), datetime(2010, 12, 12)).date(),
             phone=f"+1-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
             street=f"Street {i}",
-            number=f"{random.randint(1, 999)}",
+            house_number=f"{random.randint(1, 999)}",
             additional_info=f"Apt {random.randint(1, 50)}" if random.random() > 0.5 else None,
             country="Country X",
             state=f"State {random.choice(['A', 'B', 'C'])}",

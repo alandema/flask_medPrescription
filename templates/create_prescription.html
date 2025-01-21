@@ -14,8 +14,10 @@
                     <option value="">Selecione o paciente</option>
                     {% for patient in patients %}
                     <option value="{{ patient.id }}" data-cpf="{{ patient.cpf }}" data-street="{{ patient.street }}"
-                        data-number="{{ patient.number }}" data-city="{{ patient.city }}"
-                        data-state="{{ patient.state }}" data-country="{{ patient.country }}">
+                        data-house_number="{{ patient.house_number }}" data-number="{{ patient.number }}"
+                        data-additional_info="{{ patient.additional_info }}" data-city="{{ patient.city }}"
+                        data-state="{{ patient.state }}" data-phone=" {{ patient.phone }}"
+                        data-country=" {{ patient.country }}">
                         {{ patient.name }}</option>
                     {% endfor %}
                 </select>

@@ -71,14 +71,21 @@ function updatePreview() {
         const patientName = selectedPatient.text;
         const patientCPF = selectedPatient.dataset.cpf;
         const patientStreet = selectedPatient.dataset.street;
+        const patientHouseNumber = selectedPatient.dataset.house_number;
         const patientState = selectedPatient.dataset.state;
         const patientCity = selectedPatient.dataset.city;
-
+        const patientPhone = selectedPatient.dataset.phone;
+        const patientAdditionalInfo = selectedPatient.dataset.additional_info;
+        const addressPreview = patientAdditionalInfo ?
+            `${patientStreet}, ${patientHouseNumber}, ${patientAdditionalInfo}, ${patientCity} - ${patientState}` :
+            `${patientStreet}, ${patientHouseNumber}, ${patientCity} - ${patientState}`;
 
         document.getElementById('preview_patient').innerHTML = `
             <h4>Paciente: ${patientName}</h4>
             <p>CPF: ${patientCPF}</p>
-            <p>Endereço: ${patientStreet}, ${patientCity} - ${patientState}</p>
+            <p>Endereço: ${addressPreview}</p>
+            <p>Fone: ${patientPhone}</p>
+
         `;
     } else {
         document.getElementById('preview_patient').innerHTML = '';

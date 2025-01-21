@@ -12,7 +12,7 @@ class Patients(db.Model):
     birth_date = db.Column(db.Date, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     street = db.Column(db.String(100), nullable=False)
-    number = db.Column(db.String(10), nullable=False)
+    house_number = db.Column(db.String(10), nullable=False)
     additional_info = db.Column(db.String(20), nullable=True)
     country = db.Column(db.String(20), nullable=False)
     state = db.Column(db.String(20), nullable=False)
