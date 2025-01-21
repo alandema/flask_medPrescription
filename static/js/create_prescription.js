@@ -32,10 +32,14 @@ function toggleCustomDosage(select) {
 }
 
 function addMedication() {
-    const template = document.querySelector('.medication-entry').cloneNode(true);
-    template.querySelector('.medication-select').value = '';
-    template.querySelector('.medication-info').value = '';
-    document.getElementById('medications_list').appendChild(template);
+    const template = document.getElementById('medication-entry-template');
+    const newEntry = document.importNode(template.content, true);
+
+    // Reset values if needed
+    newEntry.querySelector('.medication-select').value = '';
+    newEntry.querySelector('.medication-info').value = '';
+
+    document.getElementById('medications_list').appendChild(newEntry);
     updatePreview();
 }
 
@@ -56,12 +60,29 @@ function updateMedicationInfo(select) {
     updatePreview();
 }
 
+let patientsData = {};
+
 function updatePreview() {
     // Update patient info
     const patient = document.getElementById('patient');
     const selectedPatient = patient.options[patient.selectedIndex];
-    document.getElementById('preview_patient').innerHTML = selectedPatient.value ?
-        `<h4>Paciente: ${selectedPatient.text}</h4>` : '';
+    if (selectedPatient.value) {
+        // Assuming the additional data is stored in data attributes
+        const patientName = selectedPatient.text;
+        const patientCPF = selectedPatient.dataset.cpf;
+        const patientStreet = selectedPatient.dataset.street;
+        const patientState = selectedPatient.dataset.state;
+        const patientCity = selectedPatient.dataset.city;
+
+
+        document.getElementById('preview_patient').innerHTML = `
+            <h4>Paciente: ${patientName}</h4>
+            <p>CPF: ${patientCPF}</p>
+            <p>Endereço: ${patientStreet}, ${patientCity} - ${patientState}</p>
+        `;
+    } else {
+        document.getElementById('preview_patient').innerHTML = '';
+    }
 
     // Update date
     const currentDate = new Date().toLocaleDateString('pt-BR');
@@ -97,6 +118,6 @@ function updatePreview() {
 // Initial preview update
 document.addEventListener('DOMContentLoaded', updatePreview);
 
-document.querySelector('.medication-info').addEventListener('focusout', function() {
+document.querySelector('.medication-info').addEventListener('focusout', function () {
     updatePreview();
 });

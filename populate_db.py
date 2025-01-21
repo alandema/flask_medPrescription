@@ -14,19 +14,18 @@ def populate_database():
     patient_names = ["Alice Smith", "Bob Johnson", "Catherine Lee", "David Brown", "Emma Wilson",
                      "Frank Harris", "Grace Young", "Henry Clark", "Ivy Hall", "Jack Adams"]
     medications = [
-        {"name": "Ibuprofen", "formula": "Ibuprofen 200mg, excipients", "usage": "Take 2 tablets every 12 hours"},
-        {"name": "Amoxicillin", "formula": "Amoxicillin 500mg, excipients", "usage": "Take 1 tablet every 8 hours"},
-        {"name": "Paracetamol", "formula": "Paracetamol 500mg, excipients", "usage": "Take 1 tablet every 4-6 hours"},
-        {"name": "Metformin", "formula": "Metformin 500mg, excipients", "usage": "Take 1 tablet every 12 hours"},
-        {"name": "Omeprazole", "formula": "Omeprazole 20mg, excipients", "usage": "Take 1 tablet every 24 hours"}
+        {"name": "Ibuprofen", "information": "Ibuprofen 200mg\nTake 2 tablets every 12 hours"},
+        {"name": "Amoxicillin", "information": "Amoxicillin 500mg, excipients\nTake 1 tablet every 8 hours"},
+        {"name": "Paracetamol", "information": "Paracetamol 500mg, excipients\nTake 1 tablet every 4-6 hours"},
+        {"name": "Metformin", "information": "Metformin 500mg, excipients\nTake 1 tablet every 12 hours"},
+        {"name": "Omeprazole", "information": "Omeprazole 20mg, excipients\nTake 1 tablet every 24 hours"}
     ]
 
     # Generate and insert medications
     for med in medications:
         db_medicament = Medications(
             name=med["name"],
-            formula=med["formula"],
-            usage=med["usage"]
+            information=med["information"]
         )
         db.session.add(db_medicament)
         db.session.commit()

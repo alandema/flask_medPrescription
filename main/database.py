@@ -29,9 +29,9 @@ class Prescriptions(db.Model):
     dosage = db.Column(db.String(50), nullable=False)
     date_prescribed = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
+
 class Medications(db.Model):
     __tablename__ = 'medications'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
-    formula = db.Column(db.Text, nullable=False)
-    usage = db.Column(db.Text, nullable=False)
+    information = db.Column(db.Text, nullable=False)
