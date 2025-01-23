@@ -81,7 +81,8 @@ function updatePreview() {
             `${patientStreet}, ${patientHouseNumber}, ${patientCity} - ${patientState}`;
 
         document.getElementById('preview_patient').innerHTML = `
-            <h4>Paciente: ${patientName}</h4>
+            <h4>Paciente:</h4>
+            <p> ${patientName}</p>
             <p>CPF: ${patientCPF}</p>
             <p>Endereço: ${addressPreview}</p>
             <p>Fone: ${patientPhone}</p>
@@ -99,11 +100,11 @@ function updatePreview() {
     const cidSelect = document.getElementById('cid');
     const selectedCID = cidSelect.options[cidSelect.selectedIndex];
     document.getElementById('preview_cid').innerHTML = selectedCID.value ?
-        `<h4><br /><br />CID: ${selectedCID.text}</h4>` : '';
+        `<h4>CID: ${selectedCID.text}</h4>` : '';
 
     // Update medications
     const medicationsPreview = document.getElementById('preview_medications');
-    medicationsPreview.innerHTML = '<h4><br /><br />Prescrição:</h4>';
+    medicationsPreview.innerHTML = '<h4>Prescrição:</h4>';
 
     document.querySelectorAll('.medication-entry').forEach((entry, index) => {
         const medSelect = entry.querySelector('.medication-select');
