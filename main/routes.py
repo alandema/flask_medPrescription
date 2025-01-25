@@ -75,48 +75,55 @@ def register_patient():
 
     elif request.method == 'POST':
         patient_id = request.form.get('patient_id')
-        name = request.form.get('name')
-        cpf = request.form.get('cpf')
-        birth_date = request.form.get('birth_date')
-        birth_date = datetime.strptime(birth_date, '%Y-%m-%d').date()
-        phone = request.form.get('phone')
-        street = request.form.get('street')
-        house_number = request.form.get('house_number')
-        additional_info = request.form.get('additional_info', "")
-        country = request.form.get('country')
-        state = request.form.get('state', "")
-        city = request.form.get('city', "")
-        medical_history = request.form.get('medical_history', "")
 
         if patient_id:
             patient = Patients.query.get(patient_id)
-            if patient and patient_id != 'new':
-                patient.name = name
-                patient.cpf = cpf
-                patient.birth_date = birth_date
-                patient.phone = phone
-                patient.street = street
-                patient.house_number = house_number
-                patient.additional_info = additional_info
-                patient.country = country
-                patient.state = state
-                patient.city = city
-                patient.medical_history = medical_history
-                db.session.commit()
-                flash('Paciente atualizado com sucesso!', 'success')
-            else:
-                flash('Paciente não encontrado.', 'error')
-        else:
+            cpf = request.form.get('cpf')
             existing_patient = Patients.query.filter_by(cpf=cpf).first()
             if existing_patient:
-                flash('CPF já cadastrado. Por favor, verifique os dados.', 'error')
+                flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
             else:
+                if patient and patient_id != 'new_patient':
+                    patient.name = request.form.get('name')
+                    patient.gender = request.form.get('gender')
+                    patient.cpf = request.form.get('cpf')
+                    patient.birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
+                    patient.phone = request.form.get('phone')
+                    patient.street = request.form.get('street')
+                    patient.house_number = request.form.get('house_number')
+                    patient.additional_info = request.form.get('additional_info')
+                    patient.country = request.form.get('country')
+                    patient.state = request.form.get('state')
+                    patient.city = request.form.get('city')
+                    patient.medical_history = request.form.get('medical_history')
+                    db.session.commit()
+                    flash('Paciente atualizado com sucesso!', 'success')
+                else:
+                    flash('Paciente não encontrado.', 'error')
+        else:
+            cpf = request.form.get('cpf')
+            existing_patient = Patients.query.filter_by(cpf=cpf).first()
+            if existing_patient:
+                flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
+            else:
+                name = request.form.get('name')
+                gender = request.form.get('gender')
+                birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
+                phone = request.form.get('phone')
+                street = request.form.get('street')
+                house_number = request.form.get('house_number')
+                additional_info = request.form.get('additional_info')
+                country = request.form.get('country')
+                state = request.form.get('state')
+                city = request.form.get('city')
+                medical_history = request.form.get('medical_history')
                 new_patient = Patients(
-                    name=name, cpf=cpf, birth_date=birth_date, phone=phone,
+                    name=name, cpf=cpf, gender=gender, birth_date=birth_date, phone=phone,
                     street=street, house_number=house_number, additional_info=additional_info,
                     country=country, state=state, city=city, medical_history=medical_history
                 )
                 db.session.add(new_patient)
+                flash('Paciente cadastrado com sucesso!', 'success')
         try:
             db.session.commit()
             return redirect(url_for('register_patient'))
@@ -128,9 +135,9 @@ def register_patient():
 @current_app.route('/get_patient/<int:patient_id>')
 def get_patient(patient_id):
     patient = Patients.query.get(patient_id)
-    print("######################################", patient.birth_date)
     if patient:
         return json.dumps({
+            'id': patient.id,
             'name': patient.name,
             'gender': patient.gender,
             'birth_date': str(patient.birth_date),

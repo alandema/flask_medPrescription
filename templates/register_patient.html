@@ -4,11 +4,10 @@
 <div class="register-page">
     <script src="{{ url_for('static', filename='js/register_patient.js') }}"></script>
 
-    <h1>
-        Paciente
-    </h1>
+    <h1>Cadastrar/Editar Paciente</h1>
+
     <select id="patient-select">
-        <option value="new">Novo Paciente</option>
+        <option value="new_patient">***Cadastrar Novo Paciente***</option>
         {% for patient in patients %}
         <option value="{{ patient.id }}">{{ patient.name }}</option>
         {% endfor %}
@@ -17,8 +16,7 @@
     <p><br></br><br></br></p>
 
     <form id="patientForm" method="POST" action="{{ url_for('register_patient') }}" class="patient-form">
-        <input type="hidden" id="patient-id" name="patient_id">
-
+        <input type="hidden" name="patient_id" id="patient_id">
 
         <div class="form-row">
             <div class="form-group">
@@ -117,7 +115,6 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-primary">Salvar</button>
-            <button type="reset" class="btn-secondary">Limpar</button>
         </div>
     </form>
 </div>

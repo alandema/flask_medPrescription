@@ -127,20 +127,21 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     const patientSelect = document.getElementById('patient-select');
 
-
-
     patientSelect.addEventListener('change', function () {
         const patientId = this.value;
 
-        if (patientId === 'new') {
+        if (patientId === 'new_patient') {
             // Clear the form for new patient
             document.getElementById('patientForm').reset();
-            patientSelect.value = 'new';
+            document.getElementById('patient_id').value = '';
+            patientSelect.value = 'new_patient';
             return;
         }
+
         fetch(`/get_patient/${patientId}`)
             .then(response => response.json())
             .then(patient => {
+                document.getElementById('patient_id').value = patient.id;
                 document.getElementById('name').value = patient.name;
                 document.getElementById('gender').value = patient.gender;
                 document.getElementById('cpf').value = patient.cpf;
@@ -153,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('house_number').value = patient.house_number;
                 document.getElementById('additional_info').value = patient.additional_info;
             })
+
     });
 });
 
