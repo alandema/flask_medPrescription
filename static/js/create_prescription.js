@@ -66,28 +66,40 @@ function updatePreview() {
     // Update patient info
     const patient = document.getElementById('patient');
     const selectedPatient = patient.options[patient.selectedIndex];
+
     if (selectedPatient.value) {
-        // Assuming the additional data is stored in data attributes
-        const patientName = selectedPatient.text;
-        const patientCPF = selectedPatient.dataset.cpf;
-        const patientStreet = selectedPatient.dataset.street;
-        const patientHouseNumber = selectedPatient.dataset.house_number;
-        const patientState = selectedPatient.dataset.state;
-        const patientCity = selectedPatient.dataset.city;
-        const patientPhone = selectedPatient.dataset.phone;
-        const patientAdditionalInfo = selectedPatient.dataset.additional_info;
-        const addressPreview = patientAdditionalInfo ?
-            `${patientStreet}, ${patientHouseNumber}, ${patientAdditionalInfo}, ${patientCity} - ${patientState}` :
-            `${patientStreet}, ${patientHouseNumber}, ${patientCity} - ${patientState}`;
 
-        document.getElementById('preview_patient').innerHTML = `
-            <h4>Paciente:</h4>
-            <p> ${patientName}</p>
-            <p>CPF: ${patientCPF}</p>
-            <p>Endereço: ${addressPreview}</p>
-            <p>Fone: ${patientPhone}</p>
+        const patientId = selectedPatient.value;
+        fetch(`/get_patient/${patientId}`).then(function (response) {
+            response.json().then(function (data) {
+                const patientName = data.name;
+                const patientCPF = data.cpf;
+                const patientPhone = data.phone;
+                const patientStreet = data.street;
+                const patientHouseNumber = data.house_number;
+                const patientAdditionalInfo = data.additional_info;
+                const patientCountry = data.country;
+                const patientState = data.state;
+                const patientCity = data.city;
 
-        `;
+                let addressPreview = `${patientStreet}, ${patientHouseNumber}`;
+                if (patientAdditionalInfo) {
+                    addressPreview += `, ${patientAdditionalInfo}, ${patientCity} - ${patientState}`;
+                }
+                if (patientCity) {
+                    addressPreview += `, ${patientCity} - ${patientState}`;
+                }
+
+                document.getElementById('preview_patient').innerHTML = `
+                    <h4>Paciente:</h4>
+                    <p> ${patientName}</p>
+                    <p>CPF: ${patientCPF}</p>
+                    <p>Endereço: ${addressPreview}</p>
+                    <p>Fone: ${patientPhone}</p>
+                `;
+            })
+        })
+
     } else {
         document.getElementById('preview_patient').innerHTML = '';
     }
@@ -129,3 +141,14 @@ document.addEventListener('DOMContentLoaded', updatePreview);
 document.querySelector('.medication-info').addEventListener('focusout', function () {
     updatePreview();
 });
+
+function printDiv(divName) {
+    const printContents = document.getElementById(divName).innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+}

@@ -18,9 +18,7 @@ def create_prescription():
         try:
             prescription_data = {
                 'patient_id': request.form.get('patient'),
-                'prescription_type': request.form.get('prescription_type'),
                 'created_at': request.form.get('preview_date'),
-                'medications': request.form.getlist('medication-select[]'),
             }
 
             # Add CID if hormonal

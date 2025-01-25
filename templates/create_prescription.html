@@ -13,12 +13,7 @@
                 <select name="patient" id="patient" required onchange="updatePreview()">
                     <option value="">Selecione o paciente</option>
                     {% for patient in patients %}
-                    <option value="{{ patient.id }}" data-cpf="{{ patient.cpf }}" data-street="{{ patient.street }}"
-                        data-house_number="{{ patient.house_number }}" data-number="{{ patient.number }}"
-                        data-additional_info="{{ patient.additional_info }}" data-city="{{ patient.city }}"
-                        data-state="{{ patient.state }}" data-phone=" {{ patient.phone }}"
-                        data-country=" {{ patient.country }}">
-                        {{ patient.name }}</option>
+                    <option value="{{ patient.id }}">{{ patient.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -74,8 +69,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Salvar Prescrição</button>
-                <button type="reset" class="btn-secondary">Limpar</button>
+                <button type="submit" class="btn-primary" onclick="printDiv('a4-preview')">Salvar Prescrição</button>
             </div>
         </form>
     </div>
