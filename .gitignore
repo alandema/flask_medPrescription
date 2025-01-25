@@ -174,4 +174,4 @@ config.env
 app.db
 static/images/*
 professional_info.json
-.vscode
+.vscode/
