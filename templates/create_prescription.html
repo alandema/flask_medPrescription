@@ -50,7 +50,7 @@
                                 <label>Medicamento</label>
                                 <div class="medication-input">
                                     <select class="medication-select" onchange="updateMedicationInfo(this)">
-                                        <option value="">Selecione ou customize</option>
+                                        <option value="custom">Selecione ou customize</option>
                                         {% for med in medications %}
                                         <option value="{{ med.id }}">{{ med.name }}</option>
                                         {% endfor %}
@@ -76,7 +76,7 @@
 
     <!-- Right Side - Preview -->
     <div class="preview-panel">
-        <div class="a4-preview">
+        <div class="a4-preview" , id="a4-preview">
             <div class="preview-header">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="preview-logo">
                 <div class="doctor-info">
