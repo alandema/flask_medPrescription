@@ -21,6 +21,8 @@ def create_prescription():
                 'created_at': request.form.get('preview_date'),
             }
 
+            print("auidhsauiydiauysgdiaygdiaygd iuaygduiyaqduya sdyufa ydfaoyd s")
+
             # Add CID if hormonal
             if prescription_data['prescription_type'] == 'hormonal':
                 prescription_data['cid'] = request.form.get('cid')

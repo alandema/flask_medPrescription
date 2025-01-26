@@ -127,7 +127,7 @@ function updatePreview() {
             const customInfo = medInfo.value;
             medicationsPreview.innerHTML += `
                 <p>${index + 1}. ${customName}</p>
-                <p>Informações: ${customInfo}</p>
+                <p>${customInfo}</p>
                 <br>
             `;
             return;
@@ -150,12 +150,52 @@ document.addEventListener('DOMContentLoaded', updatePreview);
 
 
 function printDiv(divName) {
-    const printContents = document.getElementById(divName).innerHTML;
-    const originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
 
-    window.print();
 
-    document.body.innerHTML = originalContents;
+    const form = document.getElementById('prescriptionForm');
+    function validateForm() {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        let isHormonal = false;
+
+        inputs.forEach(input => {
+            if (input.id === 'prescription-type' && input.value === 'hormonal') {
+                isHormonal = true;
+            }
+        });
+
+        inputs.forEach(input => {
+            if (input.id === 'cid') {
+                if (input.value.trim() === '' && isHormonal) {
+                    isValid = false;
+                }
+            } else {
+                if (input.value.trim() === '') {
+                    isValid = false;
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+    if (validateForm()) {
+        const printContents = document.getElementById(divName).innerHTML;
+        const originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+
+
+        document.body.appendChild(form);
+        form.submit();
+        form.reset();
+
+    } else {
+        alert('Por favor, preencha todos os campos antes de salvar a prescrição.');
+    }
 }
