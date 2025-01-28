@@ -16,8 +16,8 @@ class Patients(db.Model):
     house_number = db.Column(db.String(10), nullable=False)
     additional_info = db.Column(db.String(20), nullable=True)
     country = db.Column(db.String(20), nullable=False)
-    state = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
+    state = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(20), nullable=True)
     medical_history = db.Column(db.Text, nullable=True)
     prescriptions = db.relationship('Prescriptions', backref='patient', lazy=True)
 
