@@ -6,7 +6,9 @@ from .utils.medication_list import get_medications
 from .utils.cid_list import get_cids
 import json
 from weasyprint import HTML
+import os
 import base64
+from unidecode import unidecode
 
 
 @current_app.route('/')
@@ -31,17 +33,30 @@ def save_prescription():
     try:
         data = request.get_json()
 
-        # Add CSS to HTML
+        # Read and encode logo image
+        logo_path = os.path.join(current_app.static_folder, 'images/logo.png')
+        with open(logo_path, "rb") as image_file:
+            encoded_logo = base64.b64encode(image_file.read()).decode('utf-8')
+
+        # Replace relative logo path with data URL in HTML
+        html_content = data['html'].replace(
+            'src="/static/images/logo.png"',
+            f'src="data:image/png;base64,{encoded_logo}"'
+        )
+
+        # Add CSS and override scaling
+        css_content = open(os.path.join(current_app.static_folder, 'css/style.css')).read()
         full_html = f"""
         <!DOCTYPE html>
         <html>
         <head>
             <style>
-                {open('static/css/style.css').read()}
+                {css_content}
+                .a4-preview {{ transform: none !important; }}
             </style>
         </head>
         <body>
-            {data['html']}
+            {html_content}
         </body>
         </html>
         """
@@ -74,7 +89,7 @@ def download_prescription(prescription_id):
     patient = Patients.query.get(prescription.patient_id)
 
     # Format filename with proper sanitization
-    safe_name = patient.name.replace(' ', '_').replace('/', '-')
+    safe_name = unidecode(patient.name.replace(' ', '_').replace('/', '-'))
     date_str = prescription.date_prescribed.strftime('%Y-%m-%d')
     filename = f"{safe_name}_{date_str}.pdf"
 

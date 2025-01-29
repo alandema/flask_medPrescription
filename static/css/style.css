@@ -295,10 +295,8 @@ select:focus {
     }
 
     .a4-preview {
+        transform: none !important;
         width: 210mm;
-        min-height: 297mm;
-        margin: 0 auto;
-        background: white;
-        box-shadow: none;
+        height: 297mm;
     }
 }

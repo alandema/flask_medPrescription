@@ -4,3 +4,5 @@ mysql-connector-python
 python-dotenv
 sqlalchemy_utils
 pypdf
+unidecode
+weasyprint
