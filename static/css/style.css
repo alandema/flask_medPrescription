@@ -286,3 +286,19 @@ select:focus {
         margin: 10px 0;
     }
 }
+
+@media print {
+    body {
+        margin: 0;
+        padding: 20px;
+        size: A4;
+    }
+
+    .a4-preview {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        background: white;
+        box-shadow: none;
+    }
+}

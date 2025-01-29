@@ -1,10 +1,12 @@
-from flask import current_app, render_template, request, redirect, url_for, flash
+from flask import current_app, render_template, request, redirect, url_for, flash, Response
 from .database import db, Patients, Prescriptions
 from datetime import datetime
 from .utils.professional_info import get_professional_info
 from .utils.medication_list import get_medications
 from .utils.cid_list import get_cids
 import json
+from weasyprint import HTML
+import base64
 
 
 @current_app.route('/')
@@ -12,56 +14,76 @@ def index():
     return render_template('index.html')
 
 
-@current_app.route('/create_prescription', methods=['GET', 'POST'])
+@current_app.route('/create_prescription')
 def create_prescription():
-    if request.method == 'POST':
-        try:
-            prescription_data = {
-                'patient_id': request.form.get('patient'),
-                'created_at': request.form.get('preview_date'),
-            }
-
-            print("auidhsauiydiauysgdiaygdiaygd iuaygduiyaqduya sdyufa ydfaoyd s")
-
-            # Add CID if hormonal
-            if prescription_data['prescription_type'] == 'hormonal':
-                prescription_data['cid'] = request.form.get('cid')
-                if not prescription_data['cid']:
-                    flash('CID é obrigatório para prescrições hormonais.', 'error')
-                    return redirect(url_for('create_prescription'))
-
-            # Process medications
-            medication_selects = request.form.getlist('medication-select[]')
-            custom_medications = request.form.getlist('custom-medication[]')
-            dosage_selects = request.form.getlist('dosage-select[]')
-            custom_dosages = request.form.getlist('custom-dosage[]')
-            instructions = request.form.getlist('usage-instructions[]')
-
-            for i in range(len(medication_selects)):
-                medication = {
-                    'name': custom_medications[i] if medication_selects[i] == 'custom' else medication_selects[i],
-                    'dosage': custom_dosages[i] if dosage_selects[i] == 'custom' else dosage_selects[i],
-                    'instructions': instructions[i]
-                }
-                prescription_data['medications'].append(medication)
-
-            # Save prescription to database
-            # db.prescriptions.insert(prescription_data)  # Implement according to your database
-
-            flash('Prescrição criada com sucesso!', 'success')
-            return redirect(url_for('view_prescription', id=prescription_id))  # Implement view route
-
-        except Exception as e:
-            flash(f'Erro ao criar prescrição: {str(e)}', 'error')
-            return redirect(url_for('create_prescription'))
-
-    # GET request - render form
+    print(db.session.query(Patients).order_by(Patients.name.asc()).all())
     return render_template(
         'create_prescription.html',
         patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),
         medications=get_medications(),
         cid_list=get_cids(),
         doctor=get_professional_info()
+    )
+
+
+@current_app.route('/save_prescription', methods=['POST'])
+def save_prescription():
+    try:
+        data = request.get_json()
+
+        # Add CSS to HTML
+        full_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                {open('static/css/style.css').read()}
+            </style>
+        </head>
+        <body>
+            {data['html']}
+        </body>
+        </html>
+        """
+
+        html = HTML(string=full_html)
+        pdf_bytes = html.write_pdf()
+
+        new_prescription = Prescriptions(
+            patient_id=data['patientId'],
+            pdf_content=pdf_bytes,  # Store as blob
+            date_prescribed=datetime.strptime(data['currentDate'], '%Y-%m-%d').date()
+        )
+
+        db.session.add(new_prescription)
+        db.session.commit()
+
+        return json.dumps({
+            'success': True,
+            'prescription_id': new_prescription.id
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return json.dumps({'error': str(e)}), 500
+
+
+@current_app.route('/download_prescription/<int:prescription_id>')
+def download_prescription(prescription_id):
+    prescription = Prescriptions.query.get_or_404(prescription_id)
+    patient = Patients.query.get(prescription.patient_id)
+
+    # Format filename with proper sanitization
+    safe_name = patient.name.replace(' ', '_').replace('/', '-')
+    date_str = prescription.date_prescribed.strftime('%Y-%m-%d')
+    filename = f"{safe_name}_{date_str}.pdf"
+
+    return Response(
+        prescription.pdf_content,
+        mimetype='application/pdf',
+        headers={
+            'Content-Disposition': f'attachment; filename="{filename}"'
+        }
     )
 
 
@@ -79,7 +101,7 @@ def register_patient():
         if patient_id:
             patient = Patients.query.get(patient_id)
             cpf = request.form.get('cpf')
-            existing_patient = Patients.query.filter_by(cpf=cpf).first()
+            existing_patient = Patients.query.filter(Patients.cpf == cpf, Patients.id != patient.id).first()
             if existing_patient:
                 flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
             else:
@@ -108,6 +130,7 @@ def register_patient():
             else:
                 name = request.form.get('name')
                 gender = request.form.get('gender')
+                cpf = request.form.get('cpf')
                 birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
                 phone = request.form.get('phone')
                 street = request.form.get('street')

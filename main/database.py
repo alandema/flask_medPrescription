@@ -16,8 +16,8 @@ class Patients(db.Model):
     house_number = db.Column(db.String(10), nullable=False)
     additional_info = db.Column(db.String(20), nullable=True)
     country = db.Column(db.String(20), nullable=False)
-    state = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
+    state = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(20), nullable=True)
     medical_history = db.Column(db.Text, nullable=True)
     prescriptions = db.relationship('Prescriptions', backref='patient', lazy=True)
 
@@ -26,8 +26,7 @@ class Prescriptions(db.Model):
     __tablename__ = 'prescriptions'
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
-    medication = db.Column(db.String(100), nullable=False)
-    dosage = db.Column(db.String(50), nullable=False)
+    pdf_content = db.Column(db.LargeBinary)
     date_prescribed = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
 

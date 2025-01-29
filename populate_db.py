@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
 from flask_app import create_app  # Import the create_app function to initialize the app
-from main.database import db, Patients, Prescriptions, Medications, Cids  # Import db and models from database.py
+from main.database import db, Patients, Medications, Cids  # Import db and models from database.py
 
 
 def random_date(start, end):
@@ -48,16 +48,6 @@ def populate_database():
         )
         db.session.add(patient)
         db.session.commit()
-
-        # Generate and insert prescriptions for the patient
-        for _ in range(random.randint(0, 5)):
-            prescription = Prescriptions(
-                patient_id=patient.id,
-                medication=random.choice(medications)["name"],
-                dosage=f"{random.randint(1, 3)} tablets per day",
-                date_prescribed=random_date(datetime(2023, 1, 1), datetime(2024, 1, 1))
-            )
-            db.session.add(prescription)
 
         icd_codes = [
             ("E29.1", "Hipofunção testicular"),

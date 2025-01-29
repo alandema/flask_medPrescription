@@ -83,12 +83,9 @@ function updatePreview() {
                 const patientCity = data.city;
 
                 let addressPreview = `${patientStreet}, ${patientHouseNumber}`;
-                if (patientAdditionalInfo) {
-                    addressPreview += `, ${patientAdditionalInfo}, ${patientCity} - ${patientState}`;
-                }
-                if (patientCity) {
-                    addressPreview += `, ${patientCity} - ${patientState}`;
-                }
+                if (patientAdditionalInfo) addressPreview += `, ${patientAdditionalInfo}`;
+                if (patientCountry === 'BR') addressPreview += `, ${patientCity} - ${patientState}`;
+
 
                 document.getElementById('preview_patient').innerHTML = `
                     <h4>Paciente:</h4>
@@ -135,6 +132,7 @@ function updatePreview() {
         const medName = medSelect.options[medSelect.selectedIndex]?.text || 'Receita:';
         const info = medInfo.value;
 
+
         if (info) {
             medicationsPreview.innerHTML += `
                 <p>${index + 1}. ${medName}</p>
@@ -150,9 +148,6 @@ document.addEventListener('DOMContentLoaded', updatePreview);
 
 
 function printDiv(divName) {
-
-
-
     const form = document.getElementById('prescriptionForm');
     function validateForm() {
         const inputs = form.querySelectorAll('input, select, textarea');
@@ -177,25 +172,52 @@ function printDiv(divName) {
             }
         });
 
+        const medications = document.querySelectorAll('.medication-entry');
+        if (medications.length === 0) isValid = false;
+
         return isValid;
     }
 
     if (validateForm()) {
         const printContents = document.getElementById(divName).innerHTML;
-        const originalContents = document.body.innerHTML;
+        const patientSelect = document.getElementById('patient');
+        const patientName = patientSelect.options[patientSelect.selectedIndex].text.replace(/\s/g, "_");
+        const currentDate = new Date().toISOString().split('T')[0];
 
-        document.body.innerHTML = printContents;
+        save_pdf(printContents, patientSelect, currentDate);
 
-        window.print();
-
-        document.body.innerHTML = originalContents;
-
-
-        document.body.appendChild(form);
-        form.submit();
-        form.reset();
 
     } else {
         alert('Por favor, preencha todos os campos antes de salvar a prescrição.');
     }
 }
+function save_pdf(printContents, patientSelect, currentDate) {
+    fetch('/save_prescription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            html: printContents,
+            patientId: patientSelect.value,
+            currentDate: currentDate
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reset form
+                document.getElementById('prescriptionForm').reset();
+                // Hide CID section again
+                document.getElementById('cid_section').classList.add('hidden');
+                document.getElementById('preview_cid').classList.add('hidden');
+                // Clear medications list
+                document.getElementById('medications_list').innerHTML = '';
+                // Trigger download
+                window.location = `/download_prescription/${data.prescription_id}`;
+                // Force preview update
+                updatePreview();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+

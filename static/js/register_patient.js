@@ -13,14 +13,14 @@ document.addEventListener('DOMContentLoaded', function () {
         e.target.value = value;
     });
 
-    // Optional: Validate CPF before form submission
-    document.querySelector('.patient-form').addEventListener('submit', function (e) {
-        const cpf = cpfInput.value.replace(/\D/g, '');
-        if (!isValidCPF(cpf)) {
-            e.preventDefault();
-            alert('Por favor, insira um CPF válido');
-        }
-    });
+    // // Optional: Validate CPF before form submission
+    // document.querySelector('.patient-form').addEventListener('submit', function (e) {
+    //     const cpf = cpfInput.value.replace(/\D/g, '');
+    //     if (!isValidCPF(cpf)) {
+    //         e.preventDefault();
+    //         alert('Por favor, insira um CPF válido');
+    //     }
+    // });
 });
 
 
