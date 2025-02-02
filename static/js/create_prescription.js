@@ -119,24 +119,18 @@ function updatePreview() {
         const medSelect = entry.querySelector('.medication-select');
         const medInfo = entry.querySelector('.medication-info');
 
-        if (medSelect.value === 'custom') {
-            const customName = 'Receita';
-            const customInfo = medInfo.value;
-            medicationsPreview.innerHTML += `
-                <p>${index + 1}. ${customName}</p>
-                <p>${customInfo}</p>
-                <br>
-            `;
-            return;
-        }
         const medName = medSelect.options[medSelect.selectedIndex]?.text || 'Receita:';
         const info = medInfo.value;
 
-
         if (info) {
+            // Convert line breaks to <br> tags and preserve whitespace
+            const formattedInfo = info.split('\n').map(line =>
+                `<span style="white-space: pre-wrap">${line}</span>`
+            ).join('<br>');
+
             medicationsPreview.innerHTML += `
                 <p>${index + 1}. ${medName}</p>
-                <p>Informações: ${info}</p>
+                <div class="medication-info-preview">${formattedInfo}</div>
                 <br>
             `;
         }
