@@ -51,9 +51,8 @@ function removeMedication(button) {
 function updateMedicationInfo(select) {
     const infoInput = select.closest('.medication-entry').querySelector('.medication-info');
     if (select.value) {
-        // Fetch medication info based on selected value and update the text input
-        // For now, we'll just use the medication name as an example
-        infoInput.value = select.options[select.selectedIndex].text;
+        // Use dataset to access the data-med-information attribute
+        infoInput.value = select.options[select.selectedIndex].dataset.medInformation;
     } else {
         infoInput.value = '';
     }

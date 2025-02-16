@@ -4,6 +4,7 @@ from datetime import datetime
 from .utils.professional_info import get_professional_info
 from .utils.medication_list import get_medications
 from .utils.cid_list import get_cids
+from .utils.patient_list import get_patients
 import json
 from weasyprint import HTML
 from unidecode import unidecode
@@ -19,7 +20,7 @@ def index():
 def create_prescription():
     return render_template(
         'create_prescription.html',
-        patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),
+        patients=get_patients(),
         medications=get_medications(),
         cid_list=get_cids(),
         doctor=get_professional_info()

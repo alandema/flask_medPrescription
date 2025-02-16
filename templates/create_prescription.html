@@ -52,14 +52,15 @@
                                     <select class="medication-select" onchange="updateMedicationInfo(this)">
                                         <option value="custom">***Personalizado***</option>
                                         {% for med in medications %}
-                                        <option value="{{ med.id }}">{{ med.name }}</option>
+                                        <option value="{{ med.id }}" data-med-information="{{ med.information }}">{{
+                                            med.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Informações do Medicamento</label>
-                                <textarea class="medication-info" rows="3" onkeyup="updatePreview()"></textarea>
+                                <textarea class="medication-info" rows="4" onkeyup="updatePreview()"></textarea>
                             </div>
                             <button type="button" class="btn-remove" onclick="removeMedication(this)">Remover</button>
                         </div>
