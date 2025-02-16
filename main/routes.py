@@ -293,3 +293,9 @@ def get_medication(medication_id):
             'information': medication.information
         })
     return json.dumps({'error': 'CID not found'}), 404
+
+
+@current_app.route('/delete_item')
+def delete_item(object):
+    object = request.get_json()
+    object = json.loads(object) if isinstance(object, str) else object
