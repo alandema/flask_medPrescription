@@ -2,7 +2,8 @@ flask
 flask-sqlalchemy
 mysql-connector-python
 python-dotenv
-sqlalchemy_utils
+sqlalchemy-utils
 pypdf
 unidecode
 weasyprint
+python-dotenv
