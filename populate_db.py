@@ -40,6 +40,7 @@ def populate_database():
             phone=f"({random.randint(10, 99):02d}) {random.randint(10000, 99999):05d}-{random.randint(1000, 9999):04d}",
             street=f"Street {i}",
             house_number=f"{random.randint(1, 999)}",
+            district="District",
             additional_info=f"Apt {random.randint(1, 50)}" if random.random() > 0.5 else None,
             country=random.choice(["BR", "OUTRO"]),
             state=f"State {random.choice(['A', 'B', 'C'])}",
@@ -49,32 +50,32 @@ def populate_database():
         db.session.add(patient)
         db.session.commit()
 
-        icd_codes = [
-            ("E29.1", "Hipofunção testicular"),
-            ("E29.8", "Outra disfunção testicular"),
-            ("E29.9", "Disfunção testicular não especificada"),
-            ("R86.1", "Achados anormais de material proveniente dos órgãos genitais masculinos - nível hormonal anormal"),
-            ("E28", "Disfunção ovariana"),
-            ("E28.2", "Síndrome do ovário policístico"),
-            ("E28.8", "Outra disfunção ovariana"),
-            ("E28.9", "Disfunção ovariana não especificada"),
-            ("R87.1", "Achados anormais de material proveniente dos órgãos genitais femininos - nível hormonal anormal"),
-            ("N95.1", "Estado da menopausa e do climatério feminino"),
-            ("E34.9", "Transtorno endócrino não especificado"),
-            ("E55", "Deficiência de vitamina D"),
-            ("E55.9", "Deficiência não especificada de vitamina D"),
-            ("F41.2", "Transtorno misto ansioso e depressivo"),
-            ("R45.4", "Irritabilidade e mau humor"),
-            ("E27.1", "Hipofunção Adrenal"),
-            ("E03.9", "Hipotireoidismo não especificado")
-        ]
+    icd_codes = [
+        ("E29.1", "Hipofunção testicular"),
+        ("E29.8", "Outra disfunção testicular"),
+        ("E29.9", "Disfunção testicular não especificada"),
+        ("R86.1", "Achados anormais de material proveniente dos órgãos genitais masculinos - nível hormonal anormal"),
+        ("E28", "Disfunção ovariana"),
+        ("E28.2", "Síndrome do ovário policístico"),
+        ("E28.8", "Outra disfunção ovariana"),
+        ("E28.9", "Disfunção ovariana não especificada"),
+        ("R87.1", "Achados anormais de material proveniente dos órgãos genitais femininos - nível hormonal anormal"),
+        ("N95.1", "Estado da menopausa e do climatério feminino"),
+        ("E34.9", "Transtorno endócrino não especificado"),
+        ("E55", "Deficiência de vitamina D"),
+        ("E55.9", "Deficiência não especificada de vitamina D"),
+        ("F41.2", "Transtorno misto ansioso e depressivo"),
+        ("R45.4", "Irritabilidade e mau humor"),
+        ("E27.1", "Hipofunção Adrenal"),
+        ("E03.9", "Hipotireoidismo não especificado")
+    ]
 
-        for code, description in icd_codes:
-            cid = Cids(
-                code=code,
-                description=description
-            )
-            db.session.add(cid)
+    for code, description in icd_codes:
+        cid = Cids(
+            code=code,
+            description=description
+        )
+        db.session.add(cid)
     db.session.commit()
 
 

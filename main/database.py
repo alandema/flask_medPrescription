@@ -14,6 +14,7 @@ class Patients(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     street = db.Column(db.String(100), nullable=False)
     house_number = db.Column(db.String(10), nullable=False)
+    district = db.Column(db.String(20), nullable=True)
     additional_info = db.Column(db.String(20), nullable=True)
     country = db.Column(db.String(20), nullable=False)
     state = db.Column(db.String(20), nullable=True)

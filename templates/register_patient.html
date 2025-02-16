@@ -68,6 +68,12 @@
                     <input type="text" name="house_number" id="house_number"
                         value="{{ patient.house_number if patient else '' }}" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="district">Bairro</label>
+                    <input type="text" name="district" id="district" value="{{ patient.district if patient else '' }}"
+                        required>
+                </div>
             </div>
 
             <div class="form-row">

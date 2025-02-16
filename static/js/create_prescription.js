@@ -77,12 +77,13 @@ function updatePreview() {
                 const patientPhone = data.phone;
                 const patientStreet = data.street;
                 const patientHouseNumber = data.house_number;
+                const patientDistrict = data.district;
                 const patientAdditionalInfo = data.additional_info;
                 const patientCountry = data.country;
                 const patientState = data.state;
                 const patientCity = data.city;
 
-                let addressPreview = `${patientStreet}, ${patientHouseNumber}`;
+                let addressPreview = `${patientStreet}, ${patientHouseNumber}, ${patientDistrict}`;
                 if (patientAdditionalInfo) addressPreview += `, ${patientAdditionalInfo}`;
                 if (patientCountry === 'BR') addressPreview += `, ${patientCity} - ${patientState}`;
 
@@ -128,11 +129,19 @@ function updatePreview() {
                 `<span style="white-space: pre-wrap">${line}</span>`
             ).join('<br>');
 
-            medicationsPreview.innerHTML += `
-                <p>${index + 1}. ${medName}</p>
-                <div class="medication-info-preview">${formattedInfo}</div>
-                <br>
-            `;
+            if (medSelect.options[medSelect.selectedIndex]?.value === 'custom') {
+                medicationsPreview.innerHTML += `
+                    <p></p>
+                    <div class="medication-info-preview">${formattedInfo}</div>
+                    <br>
+                `;
+            } else {
+                medicationsPreview.innerHTML += `
+                    <p>${index + 1}. ${medName}</p>
+                    <div class="medication-info-preview">${formattedInfo}</div>
+                    <br>
+                `;
+            }
         }
     });
 }
@@ -141,7 +150,7 @@ function updatePreview() {
 document.addEventListener('DOMContentLoaded', updatePreview);
 
 
-function printDiv(divName) {
+function renderPdf(divName) {
     const form = document.getElementById('prescriptionForm');
     function validateForm() {
         const inputs = form.querySelectorAll('input, select, textarea');
@@ -174,11 +183,18 @@ function printDiv(divName) {
 
     if (validateForm()) {
         const printContents = document.getElementById(divName).innerHTML;
-        const patientSelect = document.getElementById('patient');
-        const patientName = patientSelect.options[patientSelect.selectedIndex].text.replace(/\s/g, "_");
-        const currentDate = new Date().toISOString().split('T')[0];
+        const originalContents = document.body.innerHTML;
 
-        save_pdf(printContents, patientSelect, currentDate);
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+
+
+        document.body.appendChild(form);
+        form.submit();
+        form.reset();
 
 
     } else {
@@ -186,13 +202,14 @@ function printDiv(divName) {
     }
 }
 function save_pdf(printContents, patientSelect, currentDate) {
+
     fetch('/save_prescription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            html: printContents,
             patientId: patientSelect.value,
-            currentDate: currentDate
+            currentDate: currentDate,
+            printContents: printContents
         })
     })
         .then(response => response.json())

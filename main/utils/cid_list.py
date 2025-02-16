@@ -2,5 +2,5 @@ from ..database import Cids
 
 
 def get_cids():
-    medications = Cids.query.all()
-    return medications
+    cids = Cids.query.order_by(Cids.code.asc()).all()
+    return cids

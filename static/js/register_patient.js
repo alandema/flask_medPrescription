@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('city').value = patient.city;
                 document.getElementById('street').value = patient.street;
                 document.getElementById('house_number').value = patient.house_number;
+                document.getElementById('district').value = patient.district;
                 document.getElementById('additional_info').value = patient.additional_info;
             })
 

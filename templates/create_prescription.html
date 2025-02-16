@@ -10,7 +10,7 @@
             <!-- Patient Selection -->
             <div class="form-group">
                 <label for="patient">Paciente</label>
-                <select name="patient" id="patient" onchange="updatePreview()">
+                <select name="patient" id="patient" required onchange="updatePreview()">
                     <option value="">Selecione o paciente</option>
                     {% for patient in patients %}
                     <option value="{{ patient.id }}">{{ patient.name }}</option>
@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label>Tipo de Prescrição</label>
-                <select id="prescription-type" onchange="toggleCIDSection()">
+                <select id="prescription-type" required onchange="toggleCIDSection()">
                     <option id="non_hormonal" name="prescription_type" value="non_hormonal">Não Hormonal</option>
                     <option id="hormonal" name="prescription_type" value="hormonal">Hormonal</option>
                 </select>
@@ -50,7 +50,7 @@
                                 <label>Medicamento</label>
                                 <div class="medication-input">
                                     <select class="medication-select" onchange="updateMedicationInfo(this)">
-                                        <option value="custom">***Receita Personalizada***</option>
+                                        <option value="custom">***Personalizado***</option>
                                         {% for med in medications %}
                                         <option value="{{ med.id }}">{{ med.name }}</option>
                                         {% endfor %}
@@ -69,7 +69,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-primary" onclick="return printDiv('a4-preview')">Salvar
+                <button type="button" class="btn-primary" onclick="return renderPdf('a4-preview')">Salvar
                     Prescrição</button>
             </div>
         </form>

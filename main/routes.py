@@ -1,13 +1,11 @@
-from flask import current_app, render_template, request, redirect, url_for, flash, Response
-from .database import db, Patients, Prescriptions
+from flask import current_app, render_template, request, redirect, url_for, flash, Response, jsonify
+from .database import db, Patients, Prescriptions, Cids, Medications
 from datetime import datetime
 from .utils.professional_info import get_professional_info
 from .utils.medication_list import get_medications
 from .utils.cid_list import get_cids
 import json
 from weasyprint import HTML
-import os
-import base64
 from unidecode import unidecode
 
 
@@ -18,7 +16,6 @@ def index():
 
 @current_app.route('/create_prescription')
 def create_prescription():
-    print(db.session.query(Patients).order_by(Patients.name.asc()).all())
     return render_template(
         'create_prescription.html',
         patients=db.session.query(Patients).order_by(Patients.name.asc()).all(),
@@ -32,55 +29,28 @@ def create_prescription():
 def save_prescription():
     try:
         data = request.get_json()
+        patient_id = data['patientId']
+        current_date = data['currentDate']
+        print_contents = data['printContents']
 
-        # Read and encode logo image
-        logo_path = os.path.join(current_app.static_folder, 'images/logo.png')
-        with open(logo_path, "rb") as image_file:
-            encoded_logo = base64.b64encode(image_file.read()).decode('utf-8')
+        full_html = render_template('pdf/prescription_pdf.html', content=print_contents)
 
-        # Replace relative logo path with data URL in HTML
-        html_content = data['html'].replace(
-            'src="/static/images/logo.png"',
-            f'src="data:image/png;base64,{encoded_logo}"'
-        )
+        pdf_bytes = HTML(string=full_html).write_pdf()
 
-        # Add CSS and override scaling
-        css_content = open(os.path.join(current_app.static_folder, 'css/style.css')).read()
-        full_html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                {css_content}
-                .a4-preview {{ transform: none !important; }}
-            </style>
-        </head>
-        <body>
-            {html_content}
-        </body>
-        </html>
-        """
-
-        html = HTML(string=full_html)
-        pdf_bytes = html.write_pdf()
-
+        # Save to database
         new_prescription = Prescriptions(
-            patient_id=data['patientId'],
-            pdf_content=pdf_bytes,  # Store as blob
-            date_prescribed=datetime.strptime(data['currentDate'], '%Y-%m-%d').date()
+            patient_id=patient_id,
+            pdf_content=pdf_bytes,
+            date_prescribed=datetime.strptime(current_date, '%Y-%m-%d').date()
         )
-
         db.session.add(new_prescription)
         db.session.commit()
 
-        return json.dumps({
-            'success': True,
-            'prescription_id': new_prescription.id
-        }), 200
+        return jsonify(success=True, prescription_id=new_prescription.id)
 
     except Exception as e:
         db.session.rollback()
-        return json.dumps({'error': str(e)}), 500
+        return jsonify(error=str(e)), 500
 
 
 @current_app.route('/download_prescription/<int:prescription_id>')
@@ -127,6 +97,7 @@ def register_patient():
                     patient.birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
                     patient.phone = request.form.get('phone')
                     patient.street = request.form.get('street')
+                    patient.district = request.form.get('district')
                     patient.house_number = request.form.get('house_number')
                     patient.additional_info = request.form.get('additional_info')
                     patient.country = request.form.get('country')
@@ -149,6 +120,7 @@ def register_patient():
                 birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
                 phone = request.form.get('phone')
                 street = request.form.get('street')
+                district = request.form.get('district')
                 house_number = request.form.get('house_number')
                 additional_info = request.form.get('additional_info')
                 country = request.form.get('country')
@@ -157,7 +129,7 @@ def register_patient():
                 medical_history = request.form.get('medical_history')
                 new_patient = Patients(
                     name=name, cpf=cpf, gender=gender, birth_date=birth_date, phone=phone,
-                    street=street, house_number=house_number, additional_info=additional_info,
+                    street=street, house_number=house_number, district=district, additional_info=additional_info,
                     country=country, state=state, city=city, medical_history=medical_history
                 )
                 db.session.add(new_patient)
@@ -182,6 +154,7 @@ def get_patient(patient_id):
             'cpf': patient.cpf,
             'phone': patient.phone,
             'street': patient.street,
+            'district': patient.district,
             'house_number': patient.house_number,
             'additional_info': patient.additional_info,
             'country': patient.country,
@@ -233,4 +206,51 @@ def view_prescription(id):
 @current_app.route('/print_prescription/<int:id>', methods=['GET'])
 def print_prescription(id):
     # Your view logic here
+    pass
+
+
+@current_app.route('/edit_cids', methods=['GET', 'POST'])
+def edit_cids():
+    if request.method == 'POST':
+        cid_id = request.form.get('cid_id')
+        code = request.form.get('code')
+        description = request.form.get('description')
+
+        if cid_id:
+            cid = Cids.query.get(cid_id)
+            if cid:
+                cid.code = code
+                cid.description = description
+                flash('CID atualizado com sucesso!', 'success')
+                db.session.commit()
+        else:
+            existeng_cid = Cids.query.filter(Cids.code == code, Cids.id != cid_id).first()
+            if existeng_cid:
+                flash('Código CID já cadastrado', 'error')
+            # Create new CID
+            else:
+                cid = Cids(code=code, description=description)
+                db.session.add(cid)
+                flash('CID cadastrado com sucesso!', 'success')
+                db.session.commit()
+
+    cid_list = get_cids()
+    return render_template('edit_cids.html', cid_list=cid_list)
+
+
+@current_app.route('/get_cid/<int:cid_id>')
+def get_cid(cid_id):
+    cid = Cids.query.get(cid_id)
+    if cid:
+        return json.dumps({
+            'id': cid.id,
+            'code': cid.code,
+            'description': cid.description
+        })
+    return json.dumps({'error': 'CID not found'}), 404
+
+
+@current_app.route('/edit_medications')
+def edit_medications():
+    # Logic to display and edit medications
     pass
