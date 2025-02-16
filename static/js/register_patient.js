@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('patientForm').reset();
             document.getElementById('patient_id').value = '';
             patientSelect.value = 'new_patient';
+            document.getElementById('deleteButton').hidden = true;
             return;
         }
 
@@ -155,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('district').value = patient.district;
                 document.getElementById('additional_info').value = patient.additional_info;
             })
+
+        document.getElementById('deleteButton').hidden = false;
 
     });
 });

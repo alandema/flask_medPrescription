@@ -3,6 +3,7 @@
 {% block content %}
 <div class="edit-cids-page">
     <script src="{{ url_for('static', filename='js/edit_cids.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 
     <h1>Cadastrar/Editar CID</h1>
 
@@ -33,6 +34,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-primary">Salvar</button>
+            <button type="button" id="deleteButton" class="btn-secondary" hidden>Excluir</button>
         </div>
     </form>
 </div>

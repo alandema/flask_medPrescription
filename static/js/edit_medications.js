@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedmedicationId === 'new_medication') {
             medicationForm.reset();
             medicationIdInput.value = '';
+            document.getElementById('deleteButton').hidden = true;
+
         } else {
+
             // Fetch medication data and populate form
             fetch(`/get_medication/${selectedmedicationId}`)
                 .then(response => response.json())
@@ -19,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     codeInput.value = data.name;
                     descriptionInput.value = data.information;
                 })
+            document.getElementById('deleteButton').hidden = false;
         }
 
     });

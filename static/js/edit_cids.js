@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedCidId === 'new_cid') {
             cidForm.reset();
             cidIdInput.value = '';
+            document.getElementById('deleteButton').hidden = true;
         } else {
             // Fetch CID data and populate form
             fetch(`/get_cid/${selectedCidId}`)
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     codeInput.value = data.code;
                     descriptionInput.value = data.description;
                 })
+            document.getElementById('deleteButton').hidden = false;
         }
 
     });
