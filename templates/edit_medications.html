@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="edit-medications-page">
+    <script src="{{ url_for('static', filename='js/edit_medications.js') }}"></script>
+
+    <h1>Cadastrar/Editar Medicamentos</h1>
+
+    <select id="medication-select">
+        <option value="new_medication">***Cadastrar Novo Medicamento***</option>
+        {% for medication in medications_list %}
+        <option value="{{ medication.id }}">{{ medication.name }}</option>
+        {% endfor %}
+    </select>
+
+    <p><br></br><br></br></p>
+
+    <form id="medicationForm" method="POST" action="{{ url_for('edit_medications') }}" class="medication-form">
+        <input type="hidden" name="medication_id" id="medication_id">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Nome</label>
+                <input type="text" name="name" id="name" value="{{ medication.name if medication else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="information">Possologia</label>
+                <textarea name="information" id="information" rows="3"
+                    required>{{ medication.information if medication else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

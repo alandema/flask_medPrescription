@@ -7,6 +7,7 @@ from .utils.cid_list import get_cids
 import json
 from weasyprint import HTML
 from unidecode import unidecode
+from sqlalchemy import func
 
 
 @current_app.route('/')
@@ -224,8 +225,8 @@ def edit_cids():
                 flash('CID atualizado com sucesso!', 'success')
                 db.session.commit()
         else:
-            existeng_cid = Cids.query.filter(Cids.code == code, Cids.id != cid_id).first()
-            if existeng_cid:
+            existent_cid = Cids.query.filter(func.lower(Cids.code) == func.lower(code), Cids.id != cid_id).first()
+            if existent_cid:
                 flash('Código CID já cadastrado', 'error')
             # Create new CID
             else:
@@ -250,7 +251,44 @@ def get_cid(cid_id):
     return json.dumps({'error': 'CID not found'}), 404
 
 
-@current_app.route('/edit_medications')
+@current_app.route('/edit_medications', methods=['GET', 'POST'])
 def edit_medications():
-    # Logic to display and edit medications
-    pass
+    if request.method == 'POST':
+        medication_id = request.form.get('medication_id')
+        name = request.form.get('name')
+        information = request.form.get('information')
+
+        if medication_id:
+            medication = Medications.query.get(medication_id)
+            if medication:
+                medication.name = name
+                medication.information = information
+                flash('Medicamento atualizado com sucesso!', 'success')
+                db.session.commit()
+        else:
+
+            existent_medication = Medications.query.filter(func.lower(
+                Medications.name) == func.lower(name), Medications.id != medication_id).first()
+            if existent_medication:
+                flash('Medicamento já cadastrado', 'error')
+            # Create new CID
+            else:
+                medication = Medications(name=name, information=information)
+                db.session.add(medication)
+                flash('Medicamento cadastrado com sucesso!', 'success')
+                db.session.commit()
+
+    medications_list = get_medications()
+    return render_template('edit_medications.html', medications_list=medications_list)
+
+
+@current_app.route('/get_medication/<int:medication_id>')
+def get_medication(medication_id):
+    medication = Medications.query.get(medication_id)
+    if medication:
+        return json.dumps({
+            'id': medication.id,
+            'name': medication.name,
+            'information': medication.information
+        })
+    return json.dumps({'error': 'CID not found'}), 404
