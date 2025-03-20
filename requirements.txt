@@ -2,8 +2,12 @@ flask
 flask-sqlalchemy
 mysql-connector-python
 python-dotenv
+<<<<<<< HEAD
 sqlalchemy-utils
 pypdf
 unidecode
 weasyprint
 python-dotenv
+=======
+sqlalchemy_utils
+>>>>>>> 320ef37 (commit)
