@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -53,47 +52,4 @@
         </div>
     </div>
 </div>
-=======
-{% extends "base.html" %}
-
-{% block content %}
-<div class="dashboard">
-    <h1>Bem-vinda, Dra. Emanuele</h1>
-
-    <div class="quick-actions">
-        <div class="action-card">
-            <a href="{{ url_for('create_prescription') }}" class="action-button">
-                <i class="fas fa-file-medical"></i>
-                <span>Nova Prescrição</span>
-            </a>
-        </div>
-
-        <div class="action-card">
-            <a href="{{ url_for('register_patient') }}" class="action-button">
-                <i class="fas fa-user-plus"></i>
-                <span>Cadastrar/Editar Paciente</span>
-            </a>
-        </div>
-
-        <div class="action-card">
-            <a href="{{ url_for('prescriptions_history') }}" class="action-button">
-                <i class="fas fa-history"></i>
-                <span>Histórico de prescrições</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="recent-activity">
-        <h2>Atividades Recentes</h2>
-        <div class="activity-list">
-            {% for activity in recent_activities %}
-            <div class="activity-item">
-                <span class="activity-date">{{ activity.date }}</span>
-                <span class="activity-description">{{ activity.description }}</span>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
->>>>>>> 320ef37 (commit)
 {% endblock %}
