@@ -2,17 +2,14 @@ import random
 from datetime import datetime, timedelta
 from flask_app import create_app  # Import the create_app function to initialize the app
 from main.database import db, Patients, Medications, Cids  # Import db and models from database.py
+import argparse
 
 
 def random_date(start, end):
     """Generate a random datetime between two datetime objects."""
     return start + timedelta(seconds=random.randint(0, int((end - start).total_seconds())))
 
-
-def populate_database():
-    # Sample data
-    patient_names = ["Alice Smith", "Bob Johnson", "Catherine Lee", "David Brown", "Emma Wilson",
-                     "Frank Harris", "Grace Young", "Henry Clark", "Ivy Hall", "Jack Adams"]
+def populate_medications():
     medications = [
         {"name": "Ibuprofen", "information": "Ibuprofen 200mg\nTake 2 tablets every 12 hours"},
         {"name": "Amoxicillin", "information": "Amoxicillin 500mg, excipients\nTake 1 tablet every 8 hours"},
@@ -21,16 +18,18 @@ def populate_database():
         {"name": "Omeprazole", "information": "Omeprazole 20mg, excipients\nTake 1 tablet every 24 hours"}
     ]
 
-    # Generate and insert medications
     for med in medications:
         db_medicament = Medications(
             name=med["name"],
             information=med["information"]
         )
         db.session.add(db_medicament)
-        db.session.commit()
+    db.session.commit()
 
-    # Generate and insert patients
+def populate_patients():
+    patient_names = ["Alice Smith", "Bob Johnson", "Catherine Lee", "David Brown", "Emma Wilson",
+                     "Frank Harris", "Grace Young", "Henry Clark", "Ivy Hall", "Jack Adams"]
+
     for i, name in enumerate(patient_names, start=1):
         patient = Patients(
             name=name,
@@ -48,8 +47,9 @@ def populate_database():
             medical_history="No significant history." if random.random() > 0.3 else "Has allergies."
         )
         db.session.add(patient)
-        db.session.commit()
+    db.session.commit()
 
+def populate_cids():
     icd_codes = [
         ("E29.1", "Hipofunção testicular"),
         ("E29.8", "Outra disfunção testicular"),
@@ -71,17 +71,32 @@ def populate_database():
     ]
 
     for code, description in icd_codes:
-        cid = Cids(
-            code=code,
-            description=description
-        )
-        db.session.add(cid)
+        db_cid = Cids(code=code, description=description)
+        db.session.add(db_cid)
     db.session.commit()
+
+def populate_all():
+    populate_medications()  
+    populate_patients()
+    populate_cids()
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Populate the database with sample data.")
+    parser.add_argument('type', choices=['cids', 'medications', 'patients', 'all'],
+                        help='Type of data to populate: cids, medications, patients, or all')
+    args = parser.parse_args()
+
     # Initialize Flask app and database
     app = create_app()
     with app.app_context():  # Ensure the Flask application context is active
-        populate_database()
-        print("Database populated successfully.")
+        if args.type == 'cids':
+            populate_cids()
+        elif args.type == 'medications':
+            populate_medications()
+        elif args.type == 'patients':
+            populate_patients()
+        elif args.type == 'all':
+            populate_all()
+        
+        print(f"Database populated successfully with {args.type} data.")
