@@ -230,4 +230,79 @@ function save_pdf(printContents, patientSelect, currentDate) {
         .catch(error => console.error('Error:', error));
 }
 
+function printDiv(divName) {
+
+
+
+    const form = document.getElementById('prescriptionForm');
+    function validateForm() {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        let isHormonal = false;
+
+        inputs.forEach(input => {
+            if (input.id === 'prescription-type' && input.value === 'hormonal') {
+                isHormonal = true;
+            }
+        });
+
+        inputs.forEach(input => {
+            if (input.id === 'cid') {
+                if (input.value.trim() === '' && isHormonal) {
+                    isValid = false;
+                }
+            } else {
+                if (input.value.trim() === '') {
+                    isValid = false;
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+    if (!validateForm()) {
+        alert('Por favor, preencha todos os campos antes de salvar a prescrição.');
+        return false;
+    }
+
+    // Get print contents before modifying DOM
+    const printContents = document.getElementById(divName).innerHTML;
+    const originalContents = document.body.innerHTML;
+    
+    // Get patient data for saving
+    const patientSelect = document.getElementById('patient');
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    
+    // Set default filename for PDF print
+    window.addEventListener('beforeprint', function() {
+        const patientName = patientSelect.options[patientSelect.selectedIndex].text;
+        const filename = `${patientName.replace(/\//g, '_')}_${currentDate.replace(/\//g, '_')}`;
+        console.log(filename);
+        document.title = filename;
+    });
+
+    // First print
+    document.body.innerHTML = printContents;
+    window.print();
+    
+    // Restore original content
+    document.body.innerHTML = originalContents;
+    
+    try {
+            // Then save to database
+        save_pdf(printContents, patientSelect, currentDate);
+    } catch (error) {
+    console.error(error);
+    // Expected output: ReferenceError: nonExistentFunction is not defined
+    // (Note: the exact output may be browser-dependent)
+    }
+
+    document.getElementById("prescriptionForm").reset();
+    
+    // Reload the page
+    window.location.reload();
+    return true; // Prevent form submission
+}
+
 
