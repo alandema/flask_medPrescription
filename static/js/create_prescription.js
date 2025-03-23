@@ -148,58 +148,6 @@ function updatePreview() {
 // Initial preview update
 document.addEventListener('DOMContentLoaded', updatePreview);
 
-
-function renderPdf(divName) {
-    const form = document.getElementById('prescriptionForm');
-    function validateForm() {
-        const inputs = form.querySelectorAll('input, select, textarea');
-        let isValid = true;
-        let isHormonal = false;
-
-        inputs.forEach(input => {
-            if (input.id === 'prescription-type' && input.value === 'hormonal') {
-                isHormonal = true;
-            }
-        });
-
-        inputs.forEach(input => {
-            if (input.id === 'cid') {
-                if (input.value.trim() === '' && isHormonal) {
-                    isValid = false;
-                }
-            } else {
-                if (input.value.trim() === '') {
-                    isValid = false;
-                }
-            }
-        });
-
-        const medications = document.querySelectorAll('.medication-entry');
-        if (medications.length === 0) isValid = false;
-
-        return isValid;
-    }
-
-    if (validateForm()) {
-        const printContents = document.getElementById(divName).innerHTML;
-        const originalContents = document.body.innerHTML;
-
-        document.body.innerHTML = printContents;
-
-        window.print();
-
-        document.body.innerHTML = originalContents;
-
-
-        document.body.appendChild(form);
-        form.submit();
-        form.reset();
-
-
-    } else {
-        alert('Por favor, preencha todos os campos antes de salvar a prescrição.');
-    }
-}
 function save_pdf(printContents, patientSelect, currentDate) {
 
     fetch('/save_prescription', {
@@ -231,8 +179,6 @@ function save_pdf(printContents, patientSelect, currentDate) {
 }
 
 function printDiv(divName) {
-
-
 
     const form = document.getElementById('prescriptionForm');
     function validateForm() {
@@ -272,16 +218,36 @@ function printDiv(divName) {
     
     // Get patient data for saving
     const patientSelect = document.getElementById('patient');
+    const cidSelect = document.getElementById('cid');
     const currentDate = new Date().toLocaleDateString('pt-BR');
     
+
+
     // Set default filename for PDF print
     window.addEventListener('beforeprint', function() {
         const patientName = patientSelect.options[patientSelect.selectedIndex].text;
-        const filename = `${patientName.replace(/\//g, '_')}_${currentDate.replace(/\//g, '_')}`;
-        console.log(filename);
+        const filename = `${patientName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\/\s]/g, '_')}_${currentDate.replace(/\//g, '_')}`;
         document.title = filename;
     });
 
+    const cidId = cidSelect.options[cidSelect.selectedIndex].value;
+    const medicationEntries = document.querySelectorAll('.medication-entry');
+    const medications = Array.from(medicationEntries).map(entry => {
+        const select = entry.querySelector('.medication-select');
+        return {
+            medicationId: select.value,
+            medicationName: select.options[select.selectedIndex].text,
+            medicationInfo: select.options[select.selectedIndex].dataset.medInformation
+        };
+    });
+
+    const prescriptionData = {
+        patientId: patientSelect.value,
+        currentDate: currentDate,
+        cidId: cidId,
+        medications: medications
+    };
+    
     // First print
     document.body.innerHTML = printContents;
     window.print();
@@ -290,8 +256,12 @@ function printDiv(divName) {
     document.body.innerHTML = originalContents;
     
     try {
-            // Then save to database
-        save_pdf(printContents, patientSelect, currentDate);
+        fetch('/save_prescription', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(prescriptionData)
+        })
+        .then(response => response.json())
     } catch (error) {
     console.error(error);
     // Expected output: ReferenceError: nonExistentFunction is not defined
@@ -304,5 +274,3 @@ function printDiv(divName) {
     window.location.reload();
     return true; // Prevent form submission
 }
-
-

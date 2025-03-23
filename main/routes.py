@@ -6,7 +6,6 @@ from .utils.medication_list import get_medications
 from .utils.cid_list import get_cids
 from .utils.patient_list import get_patients
 import json
-from weasyprint import HTML
 from unidecode import unidecode
 from sqlalchemy import func
 
@@ -30,25 +29,28 @@ def create_prescription():
 @current_app.route('/save_prescription', methods=['POST'])
 def save_prescription():
     try:
-        data = request.get_json()
-        patient_id = data['patientId']
-        current_date = data['currentDate']
-        print_contents = data['printContents']
-
-        full_html = render_template('pdf/prescription_pdf.html', content=print_contents)
-
-        pdf_bytes = HTML(string=full_html).write_pdf()
+        data = request.json
 
         # Save to database
+
+        patient_id=data['patientId']
+        current_date=data['currentDate']
+
+        json_form_info = {
+            'cidId': data.get('cidId',''),
+            'medications': data['medications']
+        }
+
         new_prescription = Prescriptions(
             patient_id=patient_id,
-            pdf_content=pdf_bytes,
-            date_prescribed=datetime.strptime(current_date, '%Y-%m-%d').date()
+            date_prescribed = datetime.strptime(current_date, '%d/%m/%Y').date(),
+            json_form_info=json.dumps(json_form_info)
         )
+
         db.session.add(new_prescription)
         db.session.commit()
 
-        return jsonify(success=True, prescription_id=new_prescription.id)
+        return jsonify(success=True), 200
 
     except Exception as e:
         db.session.rollback()

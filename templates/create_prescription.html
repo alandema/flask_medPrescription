@@ -2,6 +2,8 @@
 
 {% block content %}
 <div class="prescription-container">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="{{ url_for('static', filename='js/create_prescription.js') }}"></script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <!-- Left Side - Options -->
@@ -35,7 +37,7 @@
                 <select name="cid" id="cid" onchange="updatePreview()">
                     <option value="">Selecione o CID</option>
                     {% for cid in cid_list %}
-                    <option value="{{ cid.code }}">{{ cid.code }} - {{ cid.description }}</option>
+                    <option value="{{ cid.id }}">{{ cid.code }} - {{ cid.description }}</option>
                     {% endfor %}
                 </select>
             </div>

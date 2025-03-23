@@ -27,8 +27,8 @@ class Prescriptions(db.Model):
     __tablename__ = 'prescriptions'
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
-    pdf_content = db.Column(db.LargeBinary)
-    date_prescribed = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    date_prescribed = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    json_form_info = db.Column(db.Text, nullable=False)
 
 
 class Medications(db.Model):
