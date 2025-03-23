@@ -57,8 +57,8 @@ def save_prescription():
         return jsonify(error=str(e)), 500
 
 
-@current_app.route('/download_prescription/<int:prescription_id>')
-def download_prescription(prescription_id):
+@current_app.route('/delete_prescription/<int:id>')
+def delete_prescription(prescription_id):
     prescription = Prescriptions.query.get_or_404(prescription_id)
     patient = Patients.query.get(prescription.patient_id)
 
@@ -170,45 +170,50 @@ def get_patient(patient_id):
 
 @current_app.route('/prescriptions_history', methods=['GET', 'POST'])
 def prescriptions_history():
-    # Query all patients for the dropdown
-    patients = Patients.query.all()  # Or however you fetch your patients
-
+    patients = Patients.query.all()
+    
+    # Initialize variables
+    selected_patient = None
+    date_from = None
+    date_to = None
+    
     if request.method == 'POST':
-        # Get filter parameters
+        # Get filter values from form
         patient_id = request.form.get('patient')
-        date_from = request.form.get('date_from')
-        date_to = request.form.get('date_to')
-
-        # Query prescriptions based on filters
+        date_from_str = request.form.get('date_from')
+        date_to_str = request.form.get('date_to')
+        
+        # Build query
         query = Prescriptions.query
+        
+        # Filter by patient if selected
         if patient_id:
-            query = query.filter_by(patient_id=patient_id)
-
-        if date_from:
+            query = query.filter(Prescriptions.patient_id == patient_id)
+            selected_patient = Patients.query.get(patient_id)
+        
+        # Filter by date range
+        if date_from_str:
+            date_from = datetime.strptime(date_from_str, '%Y-%m-%d')
             query = query.filter(Prescriptions.date_prescribed >= date_from)
-
-        if date_to:
+        
+        if date_to_str:
+            date_to = datetime.strptime(date_to_str, '%Y-%m-%d')
             query = query.filter(Prescriptions.date_prescribed <= date_to)
-
-        prescriptions = query.all()
-
-        return render_template('prescriptions_history.html',
-                               patients=patients,
-                               prescriptions=prescriptions)
-
-    # If it's a GET request, only show the form
-    return render_template('prescriptions_history.html',
-                           patients=patients)
-
+        
+        prescriptions = query.order_by(Prescriptions.date_prescribed.desc()).all()
+    else:
+        # On GET request, show all prescriptions
+        prescriptions = Prescriptions.query.order_by(Prescriptions.date_prescribed.desc()).limit(10).all()
+    
+    return render_template('prescriptions_history.html', 
+                          prescriptions=prescriptions, 
+                          patients=patients,
+                          selected_patient=selected_patient,
+                          date_from=date_from,
+                          date_to=date_to)
 
 @current_app.route('/view_prescription/<int:id>', methods=['GET'])
 def view_prescription(id):
-    # Your view logic here
-    pass
-
-
-@current_app.route('/print_prescription/<int:id>', methods=['GET'])
-def print_prescription(id):
     # Your view logic here
     pass
 

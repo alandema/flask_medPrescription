@@ -17,12 +17,12 @@
                     {% endfor %}
                 </select>
             </div>
-
+            
             <div class="form-group">
                 <label for="date_from">Data Inicial</label>
                 <input type="date" name="date_from" id="date_from">
             </div>
-
+            
             <div class="form-group">
                 <label for="date_to">Data Final</label>
                 <input type="date" name="date_to" id="date_to">
@@ -33,25 +33,43 @@
     </div>
 
     {% if prescriptions is defined and prescriptions %}
-    <div class="prescriptions-list">
-        {% for prescription in prescriptions %}
-        <div class="prescription-card">
-            <div class="prescription-header">
-                <h3>{{ prescription.patient_name }}</h3>
-                <span class="prescription-date">{{ prescription.date }}</span>
-            </div>
-            <div class="prescription-content">
-                <p><strong>Tipo:</strong> {{ prescription.type }}</p>
-                <p><strong>Fórmula:</strong> {{ prescription.formula }}</p>
-                <p><strong>Instruções:</strong> {{ prescription.instructions }}</p>
-            </div>
-            <div class="prescription-actions">
-                <a href="{{ url_for('view_prescription', id=prescription.id) }}" class="btn-secondary">Visualizar</a>
-                <a href="{{ url_for('print_prescription', id=prescription.id) }}" class="btn-primary">Imprimir</a>
-            </div>
+        <div class="filter-summary">
+            <h3>Resultados</h3>
+            <p>
+                {% if selected_patient %}
+                    Paciente: <span class="highlight">{{ selected_patient.name }}</span>
+                {% else %}
+                    Paciente: <span class="highlight">Todos os pacientes</span>
+                {% endif %}
+                
+                {% if date_from and date_to %}
+                    | Período: <span class="highlight">{{ date_from.strftime('%d/%m/%Y') }} a {{ date_to.strftime('%d/%m/%Y') }}</span>
+                {% elif date_from %}
+                    | A partir de: <span class="highlight">{{ date_from.strftime('%d/%m/%Y') }}</span>
+                {% elif date_to %}
+                    | Até: <span class="highlight">{{ date_to.strftime('%d/%m/%Y') }}</span>
+                {% else %}
+                    | Últimas 10 prescrições
+                {% endif %}
+            </p>
         </div>
-        {% endfor %}
-    </div>
+        
+        <div class="prescriptions-list">
+            {% for prescription in prescriptions %}
+            <div class="prescription-card">
+                <div class="prescription-content">
+                    <p><strong>Paciente:</strong> {{ prescription.patient.name }}</p>
+                    <p><strong>Data:</strong> {{ prescription.date_prescribed }}</p>
+                </div>
+                <div class="prescription-actions">
+                    <a href="{{ url_for('view_prescription', id=prescription.id) }}" class="btn-primary">Abrir</a>
+                    <a href="{{ url_for('delete_prescription', id=prescription.id) }}" class="btn-secondary">Apagar</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-results">Nenhuma prescrição encontrada com os filtros selecionados.</p>
     {% endif %}
 </div>
 {% endblock %}
