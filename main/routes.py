@@ -58,22 +58,18 @@ def save_prescription():
 
 
 @current_app.route('/delete_prescription/<int:id>')
-def delete_prescription(prescription_id):
-    prescription = Prescriptions.query.get_or_404(prescription_id)
-    patient = Patients.query.get(prescription.patient_id)
-
-    # Format filename with proper sanitization
-    safe_name = unidecode(patient.name.replace(' ', '_').replace('/', '-'))
-    date_str = prescription.date_prescribed.strftime('%Y-%m-%d')
-    filename = f"{safe_name}_{date_str}.pdf"
-
-    return Response(
-        prescription.pdf_content,
-        mimetype='application/pdf',
-        headers={
-            'Content-Disposition': f'attachment; filename="{filename}"'
-        }
-    )
+def delete_prescription(id):
+    prescription = Prescriptions.query.get_or_404(id)
+    
+    try:
+        db.session.delete(prescription)
+        db.session.commit()
+        flash('Prescrição excluída com sucesso', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao excluir prescrição: {str(e)}', 'error')
+    
+    return redirect(url_for('prescriptions_history'))
 
 
 @current_app.route('/register_patient', methods=['GET', 'POST'])
@@ -212,10 +208,29 @@ def prescriptions_history():
                           date_from=date_from,
                           date_to=date_to)
 
-@current_app.route('/view_prescription/<int:id>', methods=['GET'])
+@current_app.route('/view_prescription/<int:id>')
 def view_prescription(id):
-    # Your view logic here
-    pass
+    prescription = Prescriptions.query.get_or_404(id)
+    patients = Patients.query.all()
+    cids = CID.query.all()
+    medications = Medications.query.all()
+    
+    # Get prescription details to pre-fill the form
+    prescription_data = {
+        'id': prescription.id,
+        'patient_id': prescription.patient_id,
+        'prescription_type': prescription.prescription_type,
+        'cid_codes': [cid.id for cid in prescription.cids] if prescription.cids else [],
+        'medications': [med.id for med in prescription.medications] if prescription.medications else [],
+        'date': prescription.date_prescribed.strftime('%Y-%m-%d')
+    }
+    
+    return render_template('create_prescription.html', 
+                          patients=patients, 
+                          cids=cids, 
+                          medications=medications, 
+                          prescription=prescription_data,
+                          edit_mode=True)
 
 
 @current_app.route('/edit_cids', methods=['GET', 'POST'])
