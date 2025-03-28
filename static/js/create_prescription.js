@@ -1,3 +1,25 @@
+function deleteObject(select) {
+    let objectId = select.value;
+    let objectName = select.options[select.selectedIndex].text;
+
+    let data = {
+        id: objectId,
+        name: objectName
+    };
+
+    fetch('/delete_object', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            select.remove(objectId);
+        })
+        .catch(error => console.log(error));
+}
+
 function toggleCIDSection() {
     const cidSection = document.getElementById('cid_section');
     const previewCID = document.getElementById('preview_cid');
@@ -215,16 +237,16 @@ function printDiv(divName) {
     // Get print contents before modifying DOM
     const printContents = document.getElementById(divName).innerHTML;
     const originalContents = document.body.innerHTML;
-    
+
     // Get patient data for saving
     const patientSelect = document.getElementById('patient');
     const cidSelect = document.getElementById('cid');
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    
+
 
 
     // Set default filename for PDF print
-    window.addEventListener('beforeprint', function() {
+    window.addEventListener('beforeprint', function () {
         const patientName = patientSelect.options[patientSelect.selectedIndex].text;
         const filename = `${patientName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\/\s]/g, '_')}_${currentDate.replace(/\//g, '_')}`;
         document.title = filename;
@@ -247,29 +269,29 @@ function printDiv(divName) {
         cidId: cidId,
         medications: medications
     };
-    
+
     // First print
     document.body.innerHTML = printContents;
     window.print();
-    
+
     // Restore original content
     document.body.innerHTML = originalContents;
-    
+
     try {
         fetch('/save_prescription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(prescriptionData)
         })
-        .then(response => response.json())
+            .then(response => response.json())
     } catch (error) {
-    console.error(error);
-    // Expected output: ReferenceError: nonExistentFunction is not defined
-    // (Note: the exact output may be browser-dependent)
+        console.error(error);
+        // Expected output: ReferenceError: nonExistentFunction is not defined
+        // (Note: the exact output may be browser-dependent)
     }
 
     document.getElementById("prescriptionForm").reset();
-    
+
     // Reload the page
     window.location.reload();
     return true; // Prevent form submission
