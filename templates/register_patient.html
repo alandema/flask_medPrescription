@@ -40,7 +40,7 @@
 
                 <div class="form-group">
                     <label for="cpf">CPF</label>
-                    <input maxlength=14 type="text" inputmode="numeric" name="cpf" id="cpf" required>
+                    <input maxlength=14 type="text" name="cpf" id="cpf" required>
                 </div>
             </div>
 
@@ -72,28 +72,27 @@
                 </div>
             </div>
 
-            <!-- CEP field (only visible for Brazil) -->
-            <div class="form-row" id="cep-field-container" style="display: none;">
-                <div class="form-group">
-                    <label for="cep">CEP</label>
-                    <input type="text" name="cep" id="cep" maxlength="9">
-                </div>
-            </div>
-
-            <!-- State and City fields (only visible for Brazil) -->
-            <div class="form-row" id="stateCityFields" style="display: none;">
-                <div class="form-group">
-                    <label for="state">Estado</label>
-                    <select name="state" id="state">
-                        <option value="init">Selecione o estado</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="city">Cidade</label>
-                    <select name="city" id="city">
-                        <option value="init">Selecione a cidade</option>
-                    </select>
-                </div>
+            <div id="brazil-fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="state">Estado</label>
+                            <select id="state">
+                                <option value="init">Selecione o estado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Cidade</label>
+                            <select id="city">
+                                <option value="init">Selecione a cidade</option>
+                            </select>
+                        </div>
+                    </div>
             </div>
 
             <div class="form-row">
@@ -129,7 +128,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-primary">Salvar</button>
-            <button type="button" id="deleteButton" class="btn-secondary" hidden>Excluir</button>
+            <button type="button" id="deleteButton" onclick="deletePatient()" class="btn-secondary" hidden>Excluir</button>
         </div>
     </form>
 </div>

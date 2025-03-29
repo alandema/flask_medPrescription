@@ -335,30 +335,3 @@ def delete_patient(patient_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
-
-@current_app.route('/delete_object', methods=['POST'])
-def delete_object():
-    data = request.get_json()
-    object_id = data.get('id')
-
-    try:
-        # Check if it's a CID
-        cid = Cids.query.get(object_id)
-        if cid:
-            db.session.delete(cid)
-            db.session.commit()
-            return jsonify({'success': True, 'message': 'CID deleted successfully'})
-
-        # Check if it's a Medication
-        medication = Medications.query.get(object_id)
-        if medication:
-            db.session.delete(medication)
-            db.session.commit()
-            return jsonify({'success': True, 'message': 'Medication deleted successfully'})
-
-        # If object not found
-        return jsonify({'success': False, 'message': 'Object not found'}), 404
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'success': False, 'message': str(e)}), 500

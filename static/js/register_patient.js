@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('patient_id').value = '';
             patientSelect.value = 'new_patient';
             document.getElementById('deleteButton').hidden = true;
+            document.getElementById('brazil-fields').style.display = 'none';
             return;
         }
 
@@ -116,65 +117,57 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('additional_info').value = patient.additional_info;
 
         if (patient.country === 'BR') {
-            document.getElementById('state').hidden = false;
-            document.getElementById('city').hidden = false;
-            document.getElementById('cep').hidden = false;
+            document.getElementById('brazil-fields').style.display = 'block';
         }
 
         document.getElementById('deleteButton').hidden = false;
     });
 
     const deleteButton = document.getElementById('deleteButton');
-    deleteButton.addEventListener('click', function () {
-        const patientSelect = document.getElementById('patient-select');
-        if (confirm('Tem certeza de que deseja excluir este paciente?')) {
-            let objectId = patientSelect.value;
-            let objectName = patientSelect.options[patientSelect.selectedIndex].text;
     
-            let data = {
-                id: objectId,
-                name: objectName
-            };
-    
-            fetch('/delete_object', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    patientSelect.remove(patientSelect.selectedIndex);
-                    document.getElementById('patientForm').reset();
-                    document.getElementById('patient_id').value = '';
-                    document.getElementById('deleteButton').hidden = true;
-                    patientSelect.value = 'new_patient';
-                })
-                .catch(error => console.log(error));
-        }
-    });
 });
+
+function deletePatient () {
+    const patientSelect = document.getElementById('patient-select');
+    if(confirm('Tem certeza de que deseja excluir este paciente?')) {
+        let objectId = patientSelect.value;        
+    
+        fetch(`/delete_patient/${objectId}`, {
+            method: 'DELETE' // Make sure to specify the method
+        })
+            .then(response => response.json())
+            .then(data => {
+                patientSelect.remove(patientSelect.selectedIndex);
+                document.getElementById('patientForm').reset();
+                document.getElementById('patient_id').value = '';
+                document.getElementById('deleteButton').hidden = true;
+                patientSelect.value = 'new_patient';
+            })
+            .catch(error => console.log(error));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Get DOM elements
-    const patientSelect = document.getElementById('patient');
     const countrySelect = document.getElementById('country');
     const stateSelect = document.getElementById('state');
     const citySelect = document.getElementById('city');
-    const stateCityFields = document.getElementById('stateCityFields');
     const cepInput = document.getElementById('cep');
-    const cepFieldContainer = document.getElementById('cep-field-container');
 
     // Function to load states from IBGE API
     function loadStates() {
         return fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
             .then(response => response.json())
             .then(states => {
+                // Sort states alphabetically by name
                 states.sort((a, b) => a.nome.localeCompare(b.nome));
+                // Reset state dropdown
                 stateSelect.innerHTML = '<option value="">Selecione o estado</option>';
+                // Add each state as an option
                 states.forEach(state => {
                     const option = document.createElement('option');
-                    option.value = state.sigla;
-                    option.textContent = state.nome;
+                    option.value = state.sigla; // e.g., 'SP'
+                    option.textContent = state.nome; // e.g., 'São Paulo'
                     stateSelect.appendChild(option);
                 });
             });
@@ -185,96 +178,80 @@ document.addEventListener('DOMContentLoaded', function () {
         return fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state}/municipios`)
             .then(response => response.json())
             .then(cities => {
+                // Sort cities alphabetically by name
                 cities.sort((a, b) => a.nome.localeCompare(b.nome));
+                // Reset city dropdown
                 citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
+                // Add each city as an option
                 cities.forEach(city => {
                     const option = document.createElement('option');
-                    option.value = city.nome;
+                    option.value = city.nome; // e.g., 'São Paulo'
                     option.textContent = city.nome;
                     citySelect.appendChild(option);
                 });
             });
     }
 
-    // Function to set visibility of Brazil-specific fields
-    function setVisibilityBasedOnCountry() {
-        if (countrySelect.value === 'BR') {
-            stateCityFields.style.display = 'block';
-            stateSelect.required = true;
-            citySelect.required = true;
-            if (cepFieldContainer) cepFieldContainer.style.display = 'block';
-        } else {
-            stateCityFields.style.display = 'none';
-            stateSelect.required = false;
-            citySelect.required = false;
-            if (cepFieldContainer) cepFieldContainer.style.display = 'none';
-        }
-    }
-
-    // Handle patient selection change
-    patientSelect.addEventListener('change', function () {
-        if (this.value === 'new_option') {
-            // Reset form for new patient
-            countrySelect.value = '';
-            stateSelect.value = '';
-            citySelect.value = '';
-            cepInput.value = '';
-            setVisibilityBasedOnCountry(); // Hide fields since country is not 'BR'
-        } else {
-            // For existing patient, Flask reloads the page, so we rely on page load initialization
-            // Trigger country change to ensure visibility matches the loaded data
-            const event = new Event('change');
-            countrySelect.dispatchEvent(event);
-        }
-    });
-
     // Handle country selection change
     countrySelect.addEventListener('change', function () {
-        setVisibilityBasedOnCountry();
         if (this.value === 'BR') {
+
+            document.getElementById('brazil-fields').style.display = 'block';
+
+
+            // Store current values (for editing case)
             const currentState = stateSelect.value;
             const currentCity = citySelect.value;
+
+            stateSelect.required = true;
+            citySelect.required = true;
+
+            // Load states and set values
             loadStates().then(() => {
-                stateSelect.value = currentState || '';
+                stateSelect.value = currentState || ''; // Restore state or default to empty
                 if (currentState) {
+                    // If a state is pre-selected (editing), load its cities
                     loadCities(currentState).then(() => {
-                        citySelect.value = currentCity || '';
+                        citySelect.value = currentCity || ''; // Restore city or default to empty
                     });
                 }
             });
+
         } else {
-            stateSelect.value = '';
-            citySelect.value = '';
-            cepInput.value = '';
+            stateSelect.required = false;
+            citySelect.required = false;
         }
     });
 
-    // Load cities when state changes
+    // Load cities when state changes (manual selection by user)
     stateSelect.addEventListener('change', function () {
         const selectedState = this.value;
         if (selectedState) {
             loadCities(selectedState);
         } else {
-            citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
+            citySelect.value = 'init';
         }
     });
 
     // Handle CEP input
     cepInput.addEventListener('input', function () {
-        const cep = this.value.replace(/\D/g, '');
+        const cep = this.value.replace(/\D/g, ''); // Remove non-digits
         if (cep.length === 8) {
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.erro) {
+                        // Warn user if CEP is not found
                         alert('CEP não encontrado');
                         stateSelect.value = '';
                         citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
                     } else {
+                        // Set state and load cities, then set city
                         stateSelect.value = data.uf;
                         loadCities(data.uf).then(() => {
-                            citySelect.value = data.localidade;
+                            citySelect.value = data.localidade; // e.g., 'São Paulo'
                         });
+                        // Fill other address fields
                         document.getElementById('street').value = data.logradouro || '';
                         document.getElementById('district').value = data.bairro || '';
                         document.getElementById('additional_info').value = data.complemento || '';
@@ -283,20 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Initialize form on page load
-    setVisibilityBasedOnCountry();
-    if (countrySelect.value === 'BR') {
-        const currentState = stateSelect.value || '';
-        const currentCity = citySelect.value || '';
-        const currentCep = cepInput.value || '';
-        loadStates().then(() => {
-            stateSelect.value = currentState;
-            if (currentState) {
-                loadCities(currentState).then(() => {
-                    citySelect.value = currentCity;
-                });
-            }
-        });
-        if (currentCep) cepInput.value = currentCep; // Ensure CEP is set
-    }
+    // Trigger country change on page load to initialize form
+    const event = new Event('change');
+    countrySelect.dispatchEvent(event);
 });
