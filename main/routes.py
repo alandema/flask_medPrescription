@@ -318,11 +318,6 @@ def get_medication(medication_id):
     return json.dumps({'error': 'CID not found'}), 404
 
 
-@current_app.route('/delete_item')
-def delete_item(object):
-    object = request.get_json()
-    object = json.loads(object) if isinstance(object, str) else object
-
 @current_app.route('/delete_patient/<int:patient_id>', methods=['DELETE'])
 def delete_patient(patient_id):
     try:
@@ -340,6 +335,7 @@ def delete_patient(patient_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
 @current_app.route('/delete_object', methods=['POST'])
 def delete_object():
     data = request.get_json()
