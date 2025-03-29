@@ -9,15 +9,15 @@ class Patients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     gender = db.Column(db.String(10), nullable=False)
-    cpf = db.Column(db.String(11), nullable=False)
+    cpf = db.Column(db.String(60), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
+    phone = db.Column(db.String(60), nullable=False)
     zipcode = db.Column(db.String(10), nullable=True)
     street = db.Column(db.String(100), nullable=False)
     house_number = db.Column(db.String(10), nullable=False)
-    district = db.Column(db.String(20), nullable=True)
-    additional_info = db.Column(db.String(20), nullable=True)
-    country = db.Column(db.String(20), nullable=False)
+    district = db.Column(db.String(60), nullable=True)
+    additional_info = db.Column(db.String(60), nullable=True)
+    country = db.Column(db.String(60), nullable=False)
     state = db.Column(db.String(60), nullable=True)
     city = db.Column(db.String(60), nullable=True)
     medical_history = db.Column(db.Text, nullable=True)
@@ -35,7 +35,7 @@ class Prescriptions(db.Model):
 class Medications(db.Model):
     __tablename__ = 'medications'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(60), nullable=False)
     information = db.Column(db.Text, nullable=False)
 
 
