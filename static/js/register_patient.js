@@ -78,24 +78,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Load states
             fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
-                .then(response => response.json())
-                .then(states => {
-                    states.sort((a, b) => a.nome.localeCompare(b.nome));
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(responseJSON => {
+                    responseJSON.sort((a, b) => a.nome.localeCompare(b.nome));
                     stateSelect.innerHTML = '<option value="">Selecione o estado</option>';
-                    states.forEach(state => {
+                    responseJSON.forEach(state => {
                         const option = document.createElement('option');
                         option.value = state.sigla;
                         option.textContent = state.nome;
                         stateSelect.appendChild(option);
                     });
+
                 });
+            const cepFieldContainer = document.getElementById('cep-field-container');
+            if (cepFieldContainer) {
+                cepFieldContainer.style.display = 'block';
+            }
         } else {
-            // If "Outro" is selected
             stateCityFields.style.display = 'none';
             stateSelect.required = false;
             citySelect.required = false;
-            stateSelect.value = '';
-            citySelect.value = '';
+
+            // Hide CEP field for other countries
+            const cepFieldContainer = document.getElementById('cep-field-container');
+            if (cepFieldContainer) {
+                cepFieldContainer.style.display = 'none';
+            }
+        }
+    });
+
+    const cepInput = document.getElementById('cep');
+
+    cepInput.addEventListener('input', function () {
+        const cep = this.value.replace(/\D/g, '');
+
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('state').value = data.uf;
+                    document.getElementById('street').value = data.logradouro;
+                    document.getElementById('district').value = data.bairro;
+                    document.getElementById('additional_info').value = data.complemento;
+                })
         }
     });
 
@@ -161,4 +188,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 });
-

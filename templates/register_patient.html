@@ -16,45 +16,85 @@
     <p><br></br><br></br></p>
 
     <form id="patientForm" method="POST" action="{{ url_for('register_patient') }}" class="patient-form">
-        <input type="hidden" name="patient_id" id="patient_id">
+        <div id="patient-section">
+            <h3>Informação Pessoal</h3>
+            <input type="hidden" name="patient_id" id="patient_id">
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="name">Nome Completo</label>
-                <input type="text" name="name" id="name" value="{{ patient.name if patient else '' }}" required>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" name="name" id="name" value="{{ patient.name if patient else '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Sexo</label>
+                    <select name="gender" id="gender" required>
+                        <option value="">Selecione o sexo</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input maxlength=14 type="text" name="cpf" id="cpf" value="{{ patient.cpf if patient else '' }}"
+                        required>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="gender">Sexo</label>
-                <select name="gender" id="gender" required>
-                    <option value="">Selecione o sexo</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Feminino">Feminino</option>
-                </select>
-            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birth_date">Data de Nascimento</label>
+                    <input type="date" name="birth_date" id="birth_date"
+                        value="{{ patient.birth_date if patient else '' }}" min="1900-01-01" max="2100-12-12">
+                </div>
 
-            <div class="form-group">
-                <label for="cpf">CPF</label>
-                <input maxlength=14 type="text" name="cpf" id="cpf" value="{{ patient.cpf if patient else '' }}"
-                    required>
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" name="phone" id="phone" value="{{ patient.phone if patient else '' }}" required
+                        OnKeyPress="formatPhone('(##) #####-####',this)" maxlength="15">
+                </div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="birth_date">Data de Nascimento</label>
-                <input type="date" name="birth_date" id="birth_date" value="{{ patient.birth_date if patient else '' }}"
-                    min="1900-01-01" max="2100-12-12">
-            </div>
 
-            <div class="form-group">
-                <label for="phone">Telefone</label>
-                <input type="tel" name="phone" id="phone" value="{{ patient.phone if patient else '' }}" required
-                    OnKeyPress="formatPhone('(##) #####-####',this)" maxlength="15">
-            </div>
-        </div>
         <div class="address-section">
             <h3>Endereço</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="country">País</label>
+                    <select name="country" id="country" required>
+                        <option value="">Selecione o país</option>
+                        <option value="BR">Brasil</option>
+                        <option value="other">Outros</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CEP field (only visible for Brazil) -->
+            <div class="form-row" id="cep-field-container" style="display: none;">
+                <div class="form-group">
+                    <label for="cep">CEP</label>
+                    <input type="text" name="cep" id="cep" maxlength="9">
+                </div>
+            </div>
+
+            <!-- State and City fields (only visible for Brazil) -->
+            <div class="form-row" id="stateCityFields" style="display: none;">
+                <div class="form-group">
+                    <label for="state">Estado</label>
+                    <select name="state" id="state">
+                        <option value="">Selecione o estado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">Cidade</label>
+                    <select name="city" id="city">
+                        <option value="">Selecione a cidade</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -81,34 +121,6 @@
                     <label for="additional_info">Complemento</label>
                     <input type="text" name="additional_info" id="additional_info"
                         value="{{ patient.additional_info if patient else '' }}">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="country">País</label>
-                    <select name="country" id="country" required>
-                        <option value="">Selecione o país</option>
-                        <option value="BR">Brasil</option>
-                        <option value="OUTRO">Outro
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-group state-city-group" id="stateCityFields">
-                    <div class="form-group">
-                        <label for="state">Estado</label>
-                        <select name="state" id="state">
-                            <option value="">Selecione o estado</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="city">Cidade</label>
-                        <select name="city" id="city">
-                            <option value="">Selecione a cidade</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
