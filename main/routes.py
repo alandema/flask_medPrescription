@@ -321,3 +321,21 @@ def get_medication(medication_id):
 def delete_item(object):
     object = request.get_json()
     object = json.loads(object) if isinstance(object, str) else object
+
+@current_app.route('/delete_patient/<int:patient_id>', methods=['DELETE'])
+def delete_patient(patient_id):
+    try:
+        # Get the patient from database
+        patient = Patients.query.get(patient_id)
+        
+        if not patient:
+            return jsonify({'success': False, 'error': 'Paciente não encontrado'}), 404
+        
+        # Delete the patient - SQLAlchemy will handle cascade if properly set up in your models
+        db.session.delete(patient)
+        db.session.commit()
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
