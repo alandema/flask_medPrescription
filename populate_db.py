@@ -37,6 +37,7 @@ def populate_patients():
             gender=random.choice(["Masculino", "Feminino"]),
             birth_date=random_date(datetime(1970, 1, 1), datetime(2010, 12, 12)).date(),
             phone=f"({random.randint(10, 99):02d}) {random.randint(10000, 99999):05d}-{random.randint(1000, 9999):04d}",
+            zipcode=f"{random.randint(10000, 99999)}",
             street=f"Street {i}",
             house_number=f"{random.randint(1, 999)}",
             district="District",

@@ -12,6 +12,7 @@ class Patients(db.Model):
     cpf = db.Column(db.String(11), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
     phone = db.Column(db.String(20), nullable=False)
+    zipcode = db.Column(db.String(10), nullable=False)
     street = db.Column(db.String(100), nullable=False)
     house_number = db.Column(db.String(10), nullable=False)
     district = db.Column(db.String(20), nullable=True)
