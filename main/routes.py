@@ -96,6 +96,7 @@ def register_patient():
                     patient.cpf = request.form.get('cpf')
                     patient.birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
                     patient.phone = request.form.get('phone')
+                    patient.zipcode = request.form.get('zip_code')
                     patient.street = request.form.get('street')
                     patient.district = request.form.get('district')
                     patient.house_number = request.form.get('house_number')
@@ -119,6 +120,7 @@ def register_patient():
                 cpf = request.form.get('cpf')
                 birth_date = datetime.strptime(request.form.get('birth_date'), '%Y-%m-%d').date()
                 phone = request.form.get('phone')
+                zipcode = request.form.get('cep')
                 street = request.form.get('street')
                 district = request.form.get('district')
                 house_number = request.form.get('house_number')
@@ -128,7 +130,7 @@ def register_patient():
                 city = request.form.get('city')
                 medical_history = request.form.get('medical_history')
                 new_patient = Patients(
-                    name=name, cpf=cpf, gender=gender, birth_date=birth_date, phone=phone,
+                    name=name, cpf=cpf, gender=gender, birth_date=birth_date, phone=phone, zipcode=zipcode,
                     street=street, house_number=house_number, district=district, additional_info=additional_info,
                     country=country, state=state, city=city, medical_history=medical_history
                 )
