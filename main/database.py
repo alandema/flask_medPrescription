@@ -20,7 +20,7 @@ class Patients(db.Model):
     state = db.Column(db.String(20), nullable=True)
     city = db.Column(db.String(20), nullable=True)
     medical_history = db.Column(db.Text, nullable=True)
-    prescriptions = db.relationship('Prescriptions', backref='patient', lazy=True)
+    prescriptions = db.relationship('Prescriptions', backref='patient', lazy=True, cascade='all, delete-orphan')
 
 
 class Prescriptions(db.Model):

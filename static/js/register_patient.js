@@ -182,9 +182,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('house_number').value = patient.house_number;
                 document.getElementById('district').value = patient.district;
                 document.getElementById('additional_info').value = patient.additional_info;
+
+                if (patient.country === "BR") {
+                    document.getElementById("stateCityFields").style.display = "block";
+                    // Then load the state dropdown
+                    // Then load the city dropdown based on state
+                    // Then set the selected values
+                    document.getElementById("state").value = patient.state;
+                    console.log(patient.city);
+                    document.getElementById("city").textContent = patient.city;
+                  }
             })
 
         document.getElementById('deleteButton').hidden = false;
+    });
 
+    document.getElementById('deleteButton').addEventListener('click', function() {
+        const patientId = document.getElementById('patient_id').value;
+        
+        if (!patientId) {
+            alert('Nenhum paciente selecionado para excluir.');
+            return;
+        }
+        
+        if (confirm('Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.')) {
+            fetch(`/delete_patient/${patientId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Paciente excluído com sucesso!');
+                    // Reset form and redirect to patient list or home page
+                    document.getElementById('patientForm').reset();
+                    window.location.href = '/register_patient';
+                } else {
+                    alert('Erro ao excluir paciente: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocorreu um erro ao excluir o paciente.');
+            });
+        }
     });
 });
