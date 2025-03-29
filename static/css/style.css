@@ -12,6 +12,34 @@
     box-sizing: border-box;
 }
 
+.patient-select-container {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.patient-select-container h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+#patient-select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-separator {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid #dee2e6;
+}
+
+.patient-form {
+    padding-top: 1rem;
+}
+
 .form-row {
     display: flex;
     flex-wrap: wrap;
