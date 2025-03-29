@@ -33,17 +33,17 @@ def save_prescription():
 
         # Save to database
 
-        patient_id=data['patientId']
-        current_date=data['currentDate']
+        patient_id = data['patientId']
+        current_date = data['currentDate']
 
         json_form_info = {
-            'cidId': data.get('cidId',''),
+            'cidId': data.get('cidId', ''),
             'medications': data['medications']
         }
 
         new_prescription = Prescriptions(
             patient_id=patient_id,
-            date_prescribed = datetime.strptime(current_date, '%d/%m/%Y').date(),
+            date_prescribed=datetime.strptime(current_date, '%d/%m/%Y').date(),
             json_form_info=json.dumps(json_form_info)
         )
 
@@ -60,7 +60,7 @@ def save_prescription():
 @current_app.route('/delete_prescription/<int:id>')
 def delete_prescription(id):
     prescription = Prescriptions.query.get_or_404(id)
-    
+
     try:
         db.session.delete(prescription)
         db.session.commit()
@@ -68,7 +68,7 @@ def delete_prescription(id):
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao excluir prescrição: {str(e)}', 'error')
-    
+
     return redirect(url_for('prescriptions_history'))
 
 
@@ -167,54 +167,55 @@ def get_patient(patient_id):
 @current_app.route('/prescriptions_history', methods=['GET', 'POST'])
 def prescriptions_history():
     patients = Patients.query.all()
-    
+
     # Initialize variables
     selected_patient = None
     date_from = None
     date_to = None
-    
+
     if request.method == 'POST':
         # Get filter values from form
         patient_id = request.form.get('patient')
         date_from_str = request.form.get('date_from')
         date_to_str = request.form.get('date_to')
-        
+
         # Build query
         query = Prescriptions.query
-        
+
         # Filter by patient if selected
         if patient_id:
             query = query.filter(Prescriptions.patient_id == patient_id)
             selected_patient = Patients.query.get(patient_id)
-        
+
         # Filter by date range
         if date_from_str:
             date_from = datetime.strptime(date_from_str, '%Y-%m-%d')
             query = query.filter(Prescriptions.date_prescribed >= date_from)
-        
+
         if date_to_str:
             date_to = datetime.strptime(date_to_str, '%Y-%m-%d')
             query = query.filter(Prescriptions.date_prescribed <= date_to)
-        
+
         prescriptions = query.order_by(Prescriptions.date_prescribed.desc()).all()
     else:
         # On GET request, show all prescriptions
         prescriptions = Prescriptions.query.order_by(Prescriptions.date_prescribed.desc()).limit(10).all()
-    
-    return render_template('prescriptions_history.html', 
-                          prescriptions=prescriptions, 
-                          patients=patients,
-                          selected_patient=selected_patient,
-                          date_from=date_from,
-                          date_to=date_to)
+
+    return render_template('prescriptions_history.html',
+                           prescriptions=prescriptions,
+                           patients=patients,
+                           selected_patient=selected_patient,
+                           date_from=date_from,
+                           date_to=date_to)
+
 
 @current_app.route('/view_prescription/<int:id>')
 def view_prescription(id):
     prescription = Prescriptions.query.get_or_404(id)
     patients = Patients.query.all()
-    cids = CID.query.all()
+    cids = Cids.query.all()
     medications = Medications.query.all()
-    
+
     # Get prescription details to pre-fill the form
     prescription_data = {
         'id': prescription.id,
@@ -224,13 +225,13 @@ def view_prescription(id):
         'medications': [med.id for med in prescription.medications] if prescription.medications else [],
         'date': prescription.date_prescribed.strftime('%Y-%m-%d')
     }
-    
-    return render_template('create_prescription.html', 
-                          patients=patients, 
-                          cids=cids, 
-                          medications=medications, 
-                          prescription=prescription_data,
-                          edit_mode=True)
+
+    return render_template('create_prescription.html',
+                           patients=patients,
+                           cids=cids,
+                           medications=medications,
+                           prescription=prescription_data,
+                           edit_mode=True)
 
 
 @current_app.route('/edit_cids', methods=['GET', 'POST'])
@@ -339,3 +340,29 @@ def delete_patient(patient_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+@current_app.route('/delete_object', methods=['POST'])
+def delete_object():
+    data = request.get_json()
+    object_id = data.get('id')
+
+    try:
+        # Check if it's a CID
+        cid = Cids.query.get(object_id)
+        if cid:
+            db.session.delete(cid)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'CID deleted successfully'})
+
+        # Check if it's a Medication
+        medication = Medications.query.get(object_id)
+        if medication:
+            db.session.delete(medication)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Medication deleted successfully'})
+
+        # If object not found
+        return jsonify({'success': False, 'message': 'Object not found'}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
