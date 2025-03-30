@@ -155,6 +155,7 @@ def get_patient(patient_id):
             'birth_date': str(patient.birth_date),
             'cpf': patient.cpf,
             'phone': patient.phone,
+            'zipcode': patient.zipcode,
             'street': patient.street,
             'district': patient.district,
             'house_number': patient.house_number,
