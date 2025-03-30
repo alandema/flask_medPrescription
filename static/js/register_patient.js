@@ -102,7 +102,6 @@ function deletePatient () {
             .catch(error => console.log(error));
     }
 }
-
 document.addEventListener('DOMContentLoaded', function () {
     // Get DOM elements
     const patientSelect = document.getElementById('patient-select');
@@ -139,8 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('phone').value = patient.phone;
             document.getElementById('cep').value = patient.zipcode;
             document.getElementById('country').value = patient.country;
-            document.getElementById('state').value = patient.state;
-            document.getElementById('city').value = patient.city;
             document.getElementById('street').value = patient.street;
             document.getElementById('house_number').value = patient.house_number;
             document.getElementById('district').value = patient.district;
@@ -149,16 +146,23 @@ document.addEventListener('DOMContentLoaded', function () {
             // Show/hide Brazil fields based on country
             updateBrazilFieldsVisibility(patient.country);
             
-            // If we have a state value, load the corresponding cities
-            if (patient.state && patient.country === 'BR') {
-                await loadCities(patient.state);
-                citySelect.value = patient.city;
+            // For Brazilian patients, we need to load states and cities
+            if (patient.country === 'BR') {
+                // First load all states
+                await loadStates();
+                stateSelect.value = patient.state;
+                
+                // Then load cities for the patient's state
+                if (patient.state) {
+                    await loadCities(patient.state);
+                    citySelect.value = patient.city;
+                }
+                
+                // Enable/disable state and city fields based on zipcode presence
+                const hasValidZipcode = patient.zipcode && patient.zipcode.replace(/\D/g, '').length === 8;
+                stateSelect.disabled = hasValidZipcode;
+                citySelect.disabled = hasValidZipcode;
             }
-            
-            // Enable/disable state and city fields based on zipcode presence
-            const hasValidZipcode = patient.country === 'BR' && patient.zipcode && patient.zipcode.replace(/\D/g, '').length === 8;
-            stateSelect.disabled = hasValidZipcode;
-            citySelect.disabled = hasValidZipcode;
 
             // Show the delete button
             deleteButton.hidden = false;
@@ -357,4 +361,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
