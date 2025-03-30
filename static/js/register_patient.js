@@ -278,11 +278,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle CEP input
-    cepInput.addEventListener('input', function () {
+    cepInput.addEventListener('input', async function () {
         const cep = this.value.replace(/\D/g, ''); // Remove non-digits
         
         // Format the CEP with hyphen
-        if (cep.length > 5) {
+        if (cep.length > 5 && cep.length < 9) {
             this.value = `${cep.substring(0, 5)}-${cep.substring(5, 8)}`;
         } else {
             this.value = cep;
@@ -290,6 +290,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Lookup address info when 8 digits are entered
         if (cep.length === 8) {
+
+
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
                 .then(response => response.json())
                 .then(data => {
@@ -344,7 +346,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validation checks can be added here
         // For example, checking required fields based on country
         const country = countrySelect.value;
-        
+        stateSelect.disabled = false;
+        citySelect.disabled = false;
         if (country === 'BR') {
             // For Brazil, state and city are required
             if (!stateSelect.value) {
