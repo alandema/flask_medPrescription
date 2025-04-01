@@ -169,7 +169,7 @@ def get_patient(patient_id):
 
 @current_app.route('/prescriptions_history', methods=['GET', 'POST'])
 def prescriptions_history():
-    patients = Patients.query.all()
+    patients = Patients.query.order_by(Patients.name.asc()).all()
 
     # Initialize variables
     selected_patient = None
