@@ -170,36 +170,6 @@ function updatePreview() {
 // Initial preview update
 document.addEventListener('DOMContentLoaded', updatePreview);
 
-function save_pdf(printContents, patientSelect, currentDate) {
-
-    fetch('/save_prescription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            patientId: patientSelect.value,
-            currentDate: currentDate,
-            printContents: printContents
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Reset form
-                document.getElementById('prescriptionForm').reset();
-                // Hide CID section again
-                document.getElementById('cid_section').classList.add('hidden');
-                document.getElementById('preview_cid').classList.add('hidden');
-                // Clear medications list
-                document.getElementById('medications_list').innerHTML = '';
-                // Trigger download
-                window.location = `/download_prescription/${data.prescription_id}`;
-                // Force preview update
-                updatePreview();
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
 function printDiv(divName) {
 
     const form = document.getElementById('prescriptionForm');
@@ -295,4 +265,48 @@ function printDiv(divName) {
     // Reload the page
     window.location.reload();
     return true; // Prevent form submission
+}
+
+function loadSavedPrescription(data) {
+    // Set patient
+    document.getElementById('patient').value = data.patientId;
+    
+    // Set prescription type and show/hide CID section
+    if (data.cidId) {
+        document.getElementById('prescription-type').value = 'hormonal';
+        document.getElementById('cid').value = data.cidId;
+        document.getElementById('cid_section').classList.remove('hidden');
+        document.getElementById('preview_cid').classList.remove('hidden');
+    } else {
+        document.getElementById('prescription-type').value = 'non_hormonal';
+        document.getElementById('cid_section').classList.add('hidden');
+        document.getElementById('preview_cid').classList.add('hidden');
+    }
+    
+    // Clear existing medication entries
+    const medicationsList = document.getElementById('medications_list');
+    while (medicationsList.firstChild) {
+        medicationsList.removeChild(medicationsList.firstChild);
+    }
+    
+    // Add medication entries from saved data
+    if (data.medications && data.medications.length > 0) {
+        data.medications.forEach(med => {
+            addMedication();
+            const entries = document.querySelectorAll('.medication-entry');
+            const lastEntry = entries[entries.length - 1];
+            
+            const select = lastEntry.querySelector('.medication-select');
+            const infoInput = lastEntry.querySelector('.medication-info');
+            
+            select.value = med.medicationId;
+            infoInput.value = med.medicationInfo || '';
+        });
+    } else {
+        // Add at least one empty medication entry
+        addMedication();
+    }
+    
+    // Update preview
+    updatePreview();
 }

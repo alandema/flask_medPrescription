@@ -101,4 +101,13 @@
         </div>
     </div>
 </div>
+{% if prescription_data %}
+<script>
+    // Initialize the form with saved prescription data
+    document.addEventListener('DOMContentLoaded', function() {
+        const prescriptionData = {{ prescription_data.prescription_form_data|safe }};
+        loadSavedPrescription(prescriptionData);
+    });
+</script>
+{% endif %}
 {% endblock %}

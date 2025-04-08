@@ -36,15 +36,11 @@ def save_prescription():
         patient_id = data['patientId']
         current_date = data['currentDate']
 
-        json_form_info = {
-            'cidId': data.get('cidId', ''),
-            'medications': data['medications']
-        }
 
         new_prescription = Prescriptions(
             patient_id=patient_id,
             date_prescribed=datetime.strptime(current_date, '%d/%m/%Y').date(),
-            json_form_info=json.dumps(json_form_info)
+            json_form_info=json.dumps(data)
         )
 
         db.session.add(new_prescription)
@@ -215,26 +211,22 @@ def prescriptions_history():
 @current_app.route('/view_prescription/<int:id>')
 def view_prescription(id):
     prescription = Prescriptions.query.get_or_404(id)
-    patients = Patients.query.all()
-    cids = Cids.query.all()
-    medications = Medications.query.all()
 
     # Get prescription details to pre-fill the form
     prescription_data = {
         'id': prescription.id,
         'patient_id': prescription.patient_id,
-        'prescription_type': prescription.prescription_type,
-        'cid_codes': [cid.id for cid in prescription.cids] if prescription.cids else [],
-        'medications': [med.id for med in prescription.medications] if prescription.medications else [],
-        'date': prescription.date_prescribed.strftime('%Y-%m-%d')
+        'prescription_form_data': prescription.json_form_info
     }
 
-    return render_template('create_prescription.html',
-                           patients=patients,
-                           cids=cids,
-                           medications=medications,
-                           prescription=prescription_data,
-                           edit_mode=True)
+    return render_template(
+        'create_prescription.html',
+        patients=get_patients(),
+        medications=get_medications(),
+        cid_list=get_cids(),
+        doctor=get_professional_info(),
+        prescription_data=prescription_data
+    )
 
 
 @current_app.route('/edit_cids', methods=['GET', 'POST'])
