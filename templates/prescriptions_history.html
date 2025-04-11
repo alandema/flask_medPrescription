@@ -66,7 +66,8 @@
             </div>
             <div class="prescription-actions">
                 <a href="{{ url_for('view_prescription', id=prescription.id) }}" class="btn-primary">Abrir</a>
-                <a href="{{ url_for('delete_prescription', id=prescription.id) }}" class="btn-secondary">Apagar</a>
+                <a href="#" onclick="return confirmDelete('{{ url_for('delete_prescription', id=prescription.id) }}')"
+                    class="btn-secondary">Apagar</a>
             </div>
         </div>
         {% endfor %}
@@ -96,4 +97,12 @@
     <p class="no-results">Nenhuma prescrição encontrada com os filtros selecionados.</p>
     {% endif %}
 </div>
+<script>
+    function confirmDelete(deleteUrl) {
+        if (confirm('Tem certeza que deseja apagar esta prescrição?')) {
+            window.location.href = deleteUrl;
+        }
+        return false;
+    }
+</script>
 {% endblock %}
