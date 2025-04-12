@@ -283,12 +283,7 @@ function loadSavedPrescription(data) {
         document.getElementById('preview_cid').classList.add('hidden');
     }
     
-    // Clear existing medication entries
-    const medicationsList = document.getElementById('medications_list');
-    while (medicationsList.firstChild) {
-        medicationsList.removeChild(medicationsList.firstChild);
-    }
-    
+
     // Add medication entries from saved data
     if (data.medications && data.medications.length > 0) {
         data.medications.forEach(med => {
