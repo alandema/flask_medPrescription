@@ -263,13 +263,20 @@ function printDiv(divName) {
     document.getElementById("prescriptionForm").reset();
 
     // Reload the page
-    window.location.reload();
+    window.location.href = '/create_prescription';
     return true; // Prevent form submission
 }
 
-function loadSavedPrescription(data) {
+function loadSavedPrescription(json_data, patientId) {
+    
+    const data = JSON.parse(json_data);
     // Set patient
-    document.getElementById('patient').value = data.patientId;
+    if (patientId) {
+        document.getElementById('patient').value = patientId;
+    } else {
+        document.getElementById('patient').value = data.patientId;
+    }
+    
     
     // Set prescription type and show/hide CID section
     if (data.cidId) {
@@ -297,9 +304,6 @@ function loadSavedPrescription(data) {
             select.value = med.medicationId;
             infoInput.value = med.medicationInfo || '';
         });
-    } else {
-        // Add at least one empty medication entry
-        addMedication();
     }
     
     // Update preview

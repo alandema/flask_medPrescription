@@ -225,7 +225,7 @@ def view_prescription(id):
         medications=get_medications(),
         cid_list=get_cids(),
         doctor=get_professional_info(),
-        prescription_data=prescription_data
+        prescription_data=json.dumps(prescription_data)
     )
 
 

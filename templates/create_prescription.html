@@ -105,8 +105,8 @@
 <script>
     // Initialize the form with saved prescription data
     document.addEventListener('DOMContentLoaded', function() {
-        const prescriptionData = {{ prescription_data.prescription_form_data|safe }};
-        loadSavedPrescription(prescriptionData);
+        const prescriptionDataJSON = {{ prescription_data|safe }};
+        loadSavedPrescription(prescriptionDataJSON.prescription_form_data, prescriptionDataJSON.patient_id);
     });
 </script>
 {% endif %}
