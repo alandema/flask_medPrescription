@@ -81,17 +81,9 @@ python flask_app.py
 
 The application is designed to be deployed on PythonAnywhere, but can be adapted for other hosting services.
 
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## License
-
-[Add your chosen license here]
-
 ## Author
 
-[Your name]
+Alan De Maman
 
 ---
 *This project was created to assist healthcare professionals in managing medical prescriptions and patient information digitally.*
