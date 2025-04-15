@@ -1,6 +1,6 @@
 # Medical Prescription Management System
 
-A Flask-based web application designed to help healthcare professionals manage medical prescriptions and patient information digitally.
+A Flask-based web application designed to solve a real-world problem: helping my sister digitally manage medical prescriptions and patient information.
 
 ## Features
 
