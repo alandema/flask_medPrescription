@@ -28,7 +28,25 @@ A Flask-based web application designed to solve a real-world problem: helping my
 - **Frontend**: HTML, CSS, JavaScript
 - **Dependencies**: See `requirements.txt`
 
-## Setup
+## Required Configuration
+
+Before running the application (either directly or with Docker), you must create these configuration files:
+
+1. Configure environment variables:
+```bash
+cp config-template.env config.env
+```
+Edit `config.env` with your database credentials and settings.
+
+2. Configure professional information:
+```bash
+cp professional_info-template.json professional_info.json
+```
+Edit `professional_info.json` with your professional details.
+
+## Setup Options
+
+### Option 1: Run Directly with Flask
 
 1. Clone the repository:
 ```bash
@@ -49,27 +67,61 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-4. Configure environment variables:
-```bash
-cp config-template.env config.env
-```
-Edit `config.env` with your database credentials and settings.
-
-5. Configure professional information:
-```bash
-cp professional_info-template.json professional_info.json
-```
-Edit `professional_info.json` with your professional details.
-
-6. Initialize the database:
+4. Initialize the database:
 ```bash
 python populate_db.py all
 ```
 
-7. Run the application:
+5. Run the application:
 ```bash
 python flask_app.py
 ```
+
+### Option 2: Run with Docker
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd flask_medPrescription
+```
+
+2. **Method A: Using Docker directly**
+
+   Build the Docker image:
+   ```bash
+   docker build -t med-prescription .
+   ```
+
+   Run the container (ensure you've created config.env and professional_info.json first):
+   ```bash
+   docker run -p 5000:5000 -v $(pwd)/config.env:/app/config.env -v $(pwd)/professional_info.json:/app/professional_info.json med-prescription
+   ```
+   
+   On Windows, use this volume mount syntax:
+
+    CMD:
+    ```bash
+    docker run -p 5000:5000 -v "%cd%\config.env:/app/config.env" -v "%cd%\professional_info.json:/app/professional_info.json" med-prescription
+    ```
+
+    Powershell:
+    ```powershell
+    docker run -p 5000:5000 -v "${PWD}/config.env:/app/config.env" -v "${PWD}/professional_info.json:/app/professional_info.json" med-prescription
+    ```
+
+3. **Method B: Using Docker Compose**
+
+   Run with docker-compose (ensure you've created config.env and professional_info.json first):
+   ```bash
+   docker-compose up
+   ```
+
+   This will mount your entire local directory to the container, which is useful for development.
+
+   Note: When using docker-compose, you may need to initialize the database by running:
+   ```bash
+   docker-compose exec web python populate_db.py all
+   ```
 
 ## Development
 
