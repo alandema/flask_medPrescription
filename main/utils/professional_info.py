@@ -2,7 +2,8 @@ import json
 
 
 class ProfessionalInfo:
-    def __init__(self, name, crbm, cro, address, phone, cpf):
+    def __init__(self, web_site_title, name, crbm, cro, address, phone, cpf):
+        self.web_site_title = web_site_title
         self.name = name
         self.crbm = crbm
         self.cro = cro
@@ -15,6 +16,7 @@ def get_professional_info():
         data = json.load(f)
 
     return ProfessionalInfo(
+        web_site_title=data['web_site_title'],
         name=data['name'],
         crbm=data['crbm'],
         cro=data['cro'],

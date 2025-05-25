@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Emanuele de Maman - Biomedicina Estética{% endblock %}</title>
+    <title>{% block title %}{{web_site_title}}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link
         href="https://fonts.googleapis.com/css2?family=Petit+Formal+Script&family=Raleway:wght@300;400;500;600&display=swap"
@@ -15,7 +15,7 @@
     <header>
         <nav class="main-nav">
             <div class="logo-container">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Emanuele de Maman Logo"
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"
                     class="logo">
             </div>
             <ul class="nav-links">
@@ -40,7 +40,7 @@
     </main>
 
     <footer>
-        <p>&copy; {{ current_year }} Emanuele de Maman - Biomedicina Estética. Todos os direitos reservados.</p>
+        <p>&copy; {{ current_year }} {{web_site_title}}. Todos os direitos reservados.</p>
     </footer>
 </body>
 

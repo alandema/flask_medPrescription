@@ -9,10 +9,19 @@ import json
 from unidecode import unidecode
 from sqlalchemy import func
 
+@current_app.context_processor
+def inject_web_site_title():
+    info = get_professional_info()
+    current_year = datetime.now().year
+    return {
+        'web_site_title': info.web_site_title,
+        'current_year': current_year  # This also provides the current_year variable you're using in the footer
+    }
 
 @current_app.route('/')
 def index():
-    return render_template('index.html')
+    info = get_professional_info()
+    return render_template('index.html', who=info.name)
 
 
 @current_app.route('/create_prescription')

@@ -175,3 +175,4 @@ app.db
 static/images/*
 professional_info.json
 .vscode/
+test_notebooks/
