@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('patientForm').addEventListener('submit', function (e) {
         const cpf = cpfInput.value.replace(/\D/g, '');
         if (!(function(cpf) {
+            if (cpf === '00000000000') return true;
             if (cpf.length !== 11) return false;
             
             // Check if all digits are the same
