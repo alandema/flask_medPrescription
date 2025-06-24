@@ -91,10 +91,12 @@ def register_patient():
         if patient_id:
             patient = Patients.query.get(patient_id)
             cpf = request.form.get('cpf')
-            if not cpf == '000.000.000-00':
-                existing_patient = Patients.query.filter(Patients.cpf == cpf, Patients.id != patient.id).first()
-                if existing_patient:
-                    flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
+            if cpf == '000.000.000-00':
+                existing_patient = None
+            else:
+                existing_patient = Patients.query.filter_by(cpf=cpf).first()
+            if existing_patient:
+                flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
             else:
                 if patient and patient_id != 'new_patient':
                     patient.name = request.form.get('name').title()
@@ -117,10 +119,13 @@ def register_patient():
                     flash('Paciente não encontrado.', 'error')
         else:
             cpf = request.form.get('cpf')
-            if not cpf == '000.000.000-00':
+            
+            if cpf == '000.000.000-00':
+                existing_patient = None
+            else:
                 existing_patient = Patients.query.filter_by(cpf=cpf).first()
-                if existing_patient:
-                    flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
+            if existing_patient:
+                flash('CPF já cadastrado em outro paciente. Por favor, verifique os dados.', 'error')
             else:
                 name = request.form.get('name').title()
                 gender = request.form.get('gender')
